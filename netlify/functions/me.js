@@ -27,7 +27,7 @@ exports.handler = async (event) => {
       'https://api.cal.com/v2/bookings?attendeeEmail=' + encodeURIComponent(data.email) + '&limit=100',
       {
         headers: {
-          Authorization: 'Bearer ' + process.env.CALCOM_API_KEY,
+          Authorization: 'Bearer ' + (process.env.CALCOM_API_KEY || process.env.Cal_Netlify_Key),
           'cal-api-version': '2026-05-01',
         },
       }

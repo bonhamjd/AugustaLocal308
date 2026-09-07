@@ -40,7 +40,7 @@ exports.handler = async (event) => {
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + process.env.RESEND_API_KEY,
+        Authorization: 'Bearer ' + (process.env.RESEND_API_KEY || process.env.Resend_Api_Key),
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

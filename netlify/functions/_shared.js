@@ -51,7 +51,7 @@ function parseCookies(header) {
 // Checks Stripe for any active or trialing subscription belonging to this email.
 // Uses a restricted key scoped to Customers:Read and Subscriptions:Read only.
 async function stripeActiveSubscription(email) {
-  const key = process.env.STRIPE_RESTRICTED_KEY;
+  const key = process.env.STRIPE_RESTRICTED_KEY || process.env.Stripe_Restricted_Key;
   if (!key) throw new Error('STRIPE_RESTRICTED_KEY is not set');
 
   const custRes = await fetch(
