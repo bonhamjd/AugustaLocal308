@@ -97,8 +97,8 @@
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px" data-stack-2>
       <div style="border:1px solid #2d302c;background:#101211;display:flex;flex-direction:column">
-        <div style="height:220px;background:#191b19;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #242724">
-          <span style="font-size:11px;font-weight:800;letter-spacing:0.16em;color:#5f635d">HOODIE PHOTO</span>
+        <div style="height:220px;background:#191b19;border-bottom:1px solid #242724">
+          <img src="uploads/Hoodie.webp" alt="Augusta Local 308 hoodie, front and back" loading="lazy" style="width:100%;height:220px;object-fit:cover">
         </div>
         <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
           <div>
@@ -195,33 +195,109 @@
   <div style="max-width:1280px;margin:0 auto;padding:56px 24px">
     <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:24px">
       <h2 style="font-size:clamp(28px,3.2vw,42px);font-weight:900;letter-spacing:-0.03em;margin:0">Reserve</h2>
-      <span style="font-size:14.5px;color:#83887f">Open time is open. Grab it.</span>
+      <span style="font-size:14.5px;color:#83887f">Members only. Log in to book.</span>
     </div>
-    <div style="border:1px solid #2d302c;background:#101211;padding:16px">
-      <div style="width:100%;height:680px;overflow:scroll" id="my-cal-inline-bookbay"></div>
-    </div>
-    <script type="text/javascript">
-      (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-      Cal("init", "bookbay", {origin:"https://app.cal.com"});
-      Cal.config = Cal.config || {};
-      Cal.config.forwardQueryParams = true;
-      Cal.ns.bookbay("inline", {
-        elementOrSelector:"#my-cal-inline-bookbay",
-        config: {"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"dark"},
-        calLink: "al308/bookbay",
-      });
-      Cal.ns.bookbay("ui", {"cssVarsPerTheme":{"light":{"cal-brand":"#fce300"},"dark":{"cal-brand":"#fce300"}},"hideEventTypeDetails":false,"layout":"month_view"});
-    </script>
 
-    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:20px;align-items:center">
-      <a href="https://cal.com/al308/bookbay" target="_blank" rel="noopener" style="background:#fce300;color:#0a0b0b;font-size:15px;font-weight:900;padding:17px 24px;text-decoration:none;min-height:52px;display:inline-flex;align-items:center;gap:10px">
-        Book your time
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-      </a>
-      <a href="sms:+14022157000" style="border:1.5px solid #4a4e49;color:#eef0ec;font-size:15px;font-weight:800;padding:17px 24px;text-decoration:none;min-height:52px;display:inline-flex;align-items:center">Text JD, 402-215-7000</a>
+    <div id="al308-login-gate" style="border:1px solid #2d302c;background:#101211;padding:32px;max-width:420px">
+      <div style="font-size:15px;color:#cdd0cb;margin-bottom:16px">Enter the email on your membership. We'll send you a login link.</div>
+      <form id="al308-login-form" style="display:flex;gap:10px;flex-wrap:wrap">
+        <input id="al308-login-email" type="email" required placeholder="you@email.com" style="flex:1;min-width:180px;background:#0a0b0b;border:1px solid #2d302c;color:#f4f4f1;padding:13px 14px;font-size:14.5px">
+        <button type="submit" style="background:#fce300;color:#0a0b0b;font-size:14px;font-weight:900;padding:13px 20px;border:none;cursor:pointer;min-height:46px">Send link</button>
+      </form>
+      <div id="al308-login-msg" style="margin-top:14px;font-size:13.5px;color:#9ba09a"></div>
     </div>
+
+    <div id="al308-member-view" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:18px">
+        <div style="font-size:13.5px;color:#9ba09a">Logged in as <span id="al308-member-email" style="color:#eef0ec;font-weight:700"></span></div>
+        <a href="/.netlify/functions/logout" style="font-size:13px;color:#9ba09a;text-decoration:underline">Log out</a>
+      </div>
+      <div id="al308-bookings" style="margin-bottom:22px"></div>
+      <div style="border:1px solid #2d302c;background:#101211;padding:16px">
+        <div style="width:100%;height:680px;overflow:scroll" id="my-cal-inline-bookbay"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;font-size:14px;color:#83887f">Or text JD directly: <a href="sms:+14022157000" style="color:#fce300;text-decoration:none;font-weight:700">402-215-7000</a></div>
   </div>
 </section>
+
+<script>
+(function(){
+  var gate = document.getElementById('al308-login-gate');
+  var memberView = document.getElementById('al308-member-view');
+  var form = document.getElementById('al308-login-form');
+  var msg = document.getElementById('al308-login-msg');
+  var emailInput = document.getElementById('al308-login-email');
+  var bookingsEl = document.getElementById('al308-bookings');
+  var emailLabel = document.getElementById('al308-member-email');
+
+  function fmt(dt) {
+    try { return new Date(dt).toLocaleString('en-US', {weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}); }
+    catch(e){ return dt; }
+  }
+
+  function renderBookings(data) {
+    var html = '';
+    if (data.upcoming && data.upcoming.length) {
+      html += '<div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#83887f;margin-bottom:8px">UPCOMING</div>';
+      data.upcoming.forEach(function(b){ html += '<div style="padding:12px 0;border-bottom:1px solid #242724;font-size:14.5px">'+fmt(b.start)+'</div>'; });
+    }
+    if (data.past && data.past.length) {
+      html += '<div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#83887f;margin:18px 0 8px">PAST</div>';
+      data.past.slice(0,10).forEach(function(b){ html += '<div style="padding:12px 0;border-bottom:1px solid #242724;font-size:14.5px;color:#83887f">'+fmt(b.start)+'</div>'; });
+    }
+    if (!html) html = '<div style="font-size:14px;color:#83887f">No bookings yet.</div>';
+    bookingsEl.innerHTML = html;
+  }
+
+  function loadCal() {
+    if (window.__al308CalLoaded) return;
+    window.__al308CalLoaded = true;
+    (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+    Cal("init", "bookbay", {origin:"https://app.cal.com"});
+    Cal.config = Cal.config || {};
+    Cal.config.forwardQueryParams = true;
+    Cal.ns.bookbay("inline", {
+      elementOrSelector:"#my-cal-inline-bookbay",
+      config: {"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"dark"},
+      calLink: "al308/bookbay",
+    });
+    Cal.ns.bookbay("ui", {"cssVarsPerTheme":{"light":{"cal-brand":"#fce300"},"dark":{"cal-brand":"#fce300"}},"hideEventTypeDetails":false,"layout":"month_view"});
+  }
+
+  fetch('/.netlify/functions/me', {credentials:'same-origin'})
+    .then(function(r){ return r.ok ? r.json() : Promise.reject(r); })
+    .then(function(data){
+      gate.style.display = 'none';
+      memberView.style.display = 'block';
+      emailLabel.textContent = data.email;
+      renderBookings(data);
+      loadCal();
+    })
+    .catch(function(){
+      var params = new URLSearchParams(location.search);
+      if (params.get('login') === 'expired') {
+        msg.textContent = "That link expired or wasn't valid. Enter your email again.";
+        msg.style.color = '#e2725b';
+      }
+    });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    msg.style.color = '#9ba09a';
+    msg.textContent = 'Sending...';
+    fetch('/.netlify/functions/request-login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email: emailInput.value})
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(data){ msg.textContent = data.message || 'Check your inbox.'; })
+      .catch(function(){ msg.textContent = 'Something went wrong. Text JD instead: 402-215-7000'; });
+  });
+})();
+</script>
 
 <section id="league" style="border-bottom:1px solid #242724;background:#131514">
   <div style="max-width:1280px;margin:0 auto;padding:56px 24px;display:grid;grid-template-columns:1fr 1fr;gap:44px" data-stack>
