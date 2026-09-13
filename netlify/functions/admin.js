@@ -11,6 +11,7 @@
 const {
   ENV, stripeList, emailList, isAdmin, planLabel, periodEnd, calAllBookings, requireActiveSession, json,
 } = require('./_shared');
+const store = require('./_store');
 
 const ACTIVE = ['active', 'trialing'];
 const AT_RISK = ['past_due', 'unpaid', 'incomplete'];
@@ -196,6 +197,22 @@ exports.handler = async (event) => {
       return rank(a.status) - rank(b.status) || a.name.localeCompare(b.name);
     });
 
+  // Who has a password yet. Only worth asking for people who can log in at all.
+  const canLogIn = rows.filter((r) => ACTIVE.indexOf(r.status) !== -1 || r.status === 'comp');
+  try {
+    const flags = await Promise.all(
+      canLogIn.map((r) =>
+        store.getAuth(event, r.email).then(
+          (rec) => !!(rec && rec.hash),
+          () => null
+        )
+      )
+    );
+    canLogIn.forEach((r, i) => { r.hasPassword = flags[i]; });
+  } catch (e) {
+    console.error('[admin] password flags failed:', e.message);
+  }
+
   const paying = rows.filter((r) => ACTIVE.indexOf(r.status) !== -1);
   const atRisk = rows.filter((r) => AT_RISK.indexOf(r.status) !== -1);
   const comps = rows.filter((r) => r.status === 'comp');
@@ -228,6 +245,7 @@ exports.handler = async (event) => {
     months: months,
     quietDays: QUIET_DAYS,
     haveRevenue: haveCharges,
+    needPassword: canLogIn.filter((r) => r.hasPassword === false).map((r) => r.email),
     summary: {
       paying: paying.length,
       atRisk: atRisk.length,

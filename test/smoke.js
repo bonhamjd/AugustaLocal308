@@ -180,7 +180,7 @@ function parse(r) {
   return JSON.parse(r.body);
 }
 
-const login = require('../netlify/functions/login');
+const login_ = require('../netlify/functions/login');
 const setPassword = require('../netlify/functions/set-password');
 const profile = require('../netlify/functions/profile');
 const me = require('../netlify/functions/me');
@@ -188,6 +188,7 @@ const slots = require('../netlify/functions/slots');
 const book = require('../netlify/functions/book');
 const cancel = require('../netlify/functions/cancel');
 const admin = require('../netlify/functions/admin');
+const adminSetPw = require('../netlify/functions/admin-set-password');
 const schedule = require('../netlify/functions/schedule');
 const webhook = require('../netlify/functions/cal-webhook');
 const reqLogin = require('../netlify/functions/request-login');
@@ -266,25 +267,25 @@ const verifyLogin = require('../netlify/functions/verify-login');
     assert.ok(String(r.headers['Set-Cookie']).indexOf('al308_session=') === 0, 'no session cookie issued');
   });
   await check('right password logs in and sets a cookie', async () => {
-    const r = await login.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'paid@example.com', password: 'bogeyfree2026' }) });
+    const r = await login_.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'paid@example.com', password: 'bogeyfree2026' }) });
     assert.strictEqual(r.statusCode, 200);
     assert.ok(String(r.headers['Set-Cookie']).indexOf('HttpOnly') !== -1, 'cookie is not HttpOnly');
     assert.ok(String(r.headers['Set-Cookie']).indexOf('Secure') !== -1, 'cookie is not Secure');
   });
   await check('wrong password is refused', async () => {
-    const r = await login.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'paid@example.com', password: 'nope' }) });
+    const r = await login_.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'paid@example.com', password: 'nope' }) });
     assert.strictEqual(r.statusCode, 401);
   });
   await check('failure message does not reveal membership', async () => {
-    const a = await login.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'paid@example.com', password: 'nope' }) });
-    const b = await login.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'stranger@example.com', password: 'nope' }) });
+    const a = await login_.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'paid@example.com', password: 'nope' }) });
+    const b = await login_.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'stranger@example.com', password: 'nope' }) });
     assert.strictEqual(parse(a).message, parse(b).message);
   });
   await check('five wrong tries locks the account out', async () => {
     for (let i = 0; i < 5; i++) {
-      await login.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'dale@example.com', password: 'wrong' }) });
+      await login_.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'dale@example.com', password: 'wrong' }) });
     }
-    const r = await login.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'dale@example.com', password: 'wrong' }) });
+    const r = await login_.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'dale@example.com', password: 'wrong' }) });
     assert.strictEqual(r.statusCode, 429);
   });
   await check('a lapsed member cannot set a password', async () => {
@@ -480,6 +481,47 @@ const verifyLogin = require('../netlify/functions/verify-login');
     const d = parse(r);
     const hours = d.usage.reduce((s, m) => s + m.hours, 0);
     assert.strictEqual(hours, 2, 'only the single past two hour booking should count');
+  });
+
+  console.log('\nadmin sets a member password');
+  await check('a member who is not an admin gets 404', async () => {
+    const r = await adminSetPw.handler(sessionEvent('paid@example.com', body({ email: 'dale@example.com', password: 'startinghere1' })));
+    assert.strictEqual(r.statusCode, 404);
+  });
+  await check('a stranger gets 404', async () => {
+    const r = await adminSetPw.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'dale@example.com', password: 'startinghere1' }) });
+    assert.strictEqual(r.statusCode, 404);
+  });
+  await check('short password refused', async () => {
+    const r = await adminSetPw.handler(sessionEvent('bonham.jd@gmail.com', body({ email: 'dale@example.com', password: 'short' })));
+    assert.strictEqual(r.statusCode, 400);
+  });
+  await check('cannot set one for a non-member', async () => {
+    const r = await adminSetPw.handler(sessionEvent('bonham.jd@gmail.com', body({ email: 'stranger@example.com', password: 'startinghere1' })));
+    assert.strictEqual(r.statusCode, 400);
+    assert.ok(/no active membership/i.test(parse(r).message));
+  });
+  await check('JD sets it and the member can then log in with it', async () => {
+    const set = await adminSetPw.handler(sessionEvent('bonham.jd@gmail.com', body({ email: 'dale@example.com', password: 'birdie-4821' })));
+    assert.strictEqual(set.statusCode, 200);
+    const login = await login_.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'dale@example.com', password: 'birdie-4821' }) });
+    assert.strictEqual(login.statusCode, 200, 'the password JD set did not work');
+  });
+  await check('setting it clears an existing lockout', async () => {
+    for (let i = 0; i < 6; i++) {
+      await login_.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'dale@example.com', password: 'wrong' }) });
+    }
+    const locked = await login_.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'dale@example.com', password: 'birdie-4821' }) });
+    assert.strictEqual(locked.statusCode, 429, 'expected a lockout first');
+    await adminSetPw.handler(sessionEvent('bonham.jd@gmail.com', body({ email: 'dale@example.com', password: 'wedge-7788' })));
+    const after = await login_.handler({ httpMethod: 'POST', headers: {}, body: JSON.stringify({ email: 'dale@example.com', password: 'wedge-7788' }) });
+    assert.strictEqual(after.statusCode, 200, 'lockout was not cleared');
+  });
+  await check('the dashboard says who still needs one', async () => {
+    const r = await admin.handler(sessionEvent('bonham.jd@gmail.com', { queryStringParameters: { months: '3' } }));
+    const d = parse(r);
+    assert.ok(Array.isArray(d.needPassword), 'needPassword missing');
+    assert.ok(!d.needPassword.includes('dale@example.com'), 'dale has a password now');
   });
 
   console.log('\ncal-webhook');
