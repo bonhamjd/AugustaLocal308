@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Augusta Local 308 · Members Only Indoor Golf, Franklin, Nebraska</title>
-<meta name="description" content="Members only indoor golf at 1516 L St, Franklin, NE. Uneekor simulator, 4K projector, 15 foot screen. Unlimited play from $50 a month.">
+<meta name="description" content="Members only indoor golf at 1516 L Street, Franklin, NE. Uneekor simulator, 4K projector, 15 foot screen. Unlimited play from $50 a month.">
 <link rel="canonical" href="https://augustalocal308.com/">
 <link rel="icon" href="uploads/AL308%20Logo.webp" type="image/webp">
 <link rel="apple-touch-icon" href="uploads/AL308%20Logo.webp">
@@ -17,9 +17,11 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&display=swap">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"GolfCourse","name":"Augusta Local 308","description":"Members only indoor golf simulator in Franklin, Nebraska.","url":"https://augustalocal308.com/","telephone":"+1-402-215-7000","email":"bonham.jd@gmail.com","address":{"@type":"PostalAddress","streetAddress":"1516 L St","addressLocality":"Franklin","addressRegion":"NE","postalCode":"68930","addressCountry":"US"},"openingHours":"Mo-Su 00:00-23:59","publicAccess":false}
+{"@context":"https://schema.org","@type":"GolfCourse","name":"Augusta Local 308","description":"Members only indoor golf simulator in Franklin, Nebraska.","url":"https://augustalocal308.com/","telephone":"+1-402-215-7000","email":"bonham.jd@gmail.com","address":{"@type":"PostalAddress","streetAddress":"1516 L Street","addressLocality":"Franklin","addressRegion":"NE","postalCode":"68939","addressCountry":"US"},"openingHours":"Mo-Su 00:00-23:59","publicAccess":false}
 </script>
 <style>
+  /* This page sells memberships. Everything a member actually does lives on
+     /members, so nothing here has to load, log in, or wait on an API. */
   body{margin:0;background:#0a0b0b;color:#f4f4f1;font-family:"Archivo",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -28,15 +30,23 @@
   a:hover{color:#fff48a}
   ::selection{background:#fce300;color:#0a0b0b}
   :focus-visible{outline:2px solid #fce300;outline-offset:2px}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+  .h2{font-size:clamp(28px,3.2vw,42px);font-weight:900;letter-spacing:-0.03em;margin:0}
+  .eyebrow{font-size:11px;font-weight:900;letter-spacing:0.2em;color:#fce300}
+  .panel{border:1px solid #2d302c;background:#101211}
+  .btn{background:#fce300;color:#0a0b0b;font-size:16px;font-weight:900;padding:19px 28px;text-decoration:none;min-height:56px;display:inline-flex;align-items:center;justify-content:center;gap:10px}
+  .btn:hover{background:#fff48a;color:#0a0b0b}
+  .btn-ghost{border:1.5px solid #4a4e49;color:#eef0ec;font-size:16px;font-weight:800;padding:19px 28px;text-decoration:none;min-height:56px;display:inline-flex;align-items:center;justify-content:center}
+  .btn-ghost:hover{border-color:#fce300;color:#fce300}
+
   @media (max-width:940px){
     [data-stack]{grid-template-columns:1fr !important}
     [data-hero]{grid-template-columns:1fr !important}
     [data-stack-2]{grid-template-columns:1fr 1fr !important}
     [data-cell]{border-left:0 !important;border-right:0 !important;padding-left:0 !important;padding-right:0 !important}
-    [data-herotext]{max-width:none !important;margin-left:0 !important;padding:56px 24px 48px !important}
-    [data-heromedia]{min-height:300px !important;border-left:0 !important}
-    /* Nav used to be hidden below 940px, which left phones with no way to
-       reach any section. It now wraps to its own row instead. */
+    [data-herotext]{max-width:none !important;margin-left:0 !important;padding:52px 24px 48px !important}
+    [data-heromedia]{min-height:280px !important;border-left:0 !important}
     [data-navbar]{flex-wrap:wrap !important;gap:10px !important}
     [data-navlinks]{order:3;width:100%;margin-left:0 !important;justify-content:space-between;border-top:1px solid #242724;padding-top:2px}
   }
@@ -44,39 +54,36 @@
     [data-stack-2]{grid-template-columns:1fr !important}
     [data-navlinks] a{font-size:12.5px !important;padding:9px 6px !important}
   }
-
-  a[href]:hover{filter:brightness(1.12)}
-  a[href^="#"], a[href^="http"], a[href^="tel"], a[href^="mailto"], a[href^="sms"]{transition:filter .12s ease, border-color .12s ease}
 </style>
 </head>
 <body>
-<header style="position:sticky;top:0;z-index:40;background:rgba(10,11,11,.95);border-bottom:1px solid #242724">
-  <div data-navbar style="max-width:1280px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:20px">
+<header style="position:sticky;top:0;z-index:40;background:rgba(10,11,11,.96);border-bottom:1px solid #242724">
+  <div data-navbar class="wrap" style="padding:12px 24px;display:flex;align-items:center;gap:20px">
     <a href="#top" style="display:flex;align-items:center;gap:11px;text-decoration:none">
       <img src="uploads/AL308%20Logo.webp" alt="Augusta Local 308" style="height:34px;width:auto">
       <span style="color:#f4f4f1;font-size:13px;font-weight:900;letter-spacing:0.14em;white-space:nowrap">AUGUSTA LOCAL 308</span>
     </a>
     <nav data-navlinks style="margin-left:auto;display:flex;align-items:center;gap:2px">
-      <a href="#swag" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">Swag</a>
       <a href="#membership" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">Membership</a>
       <a href="#league" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">League</a>
       <a href="#room" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">Room</a>
+      <a href="#swag" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">Swag</a>
     </nav>
-    <a href="#reserve" style="margin-left:auto;background:#fce300;color:#0a0b0b;font-size:13px;font-weight:900;padding:14px 20px;text-decoration:none;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;letter-spacing:0.03em">RESERVE</a>
+    <a href="/members" style="margin-left:auto;background:#fce300;color:#0a0b0b;font-size:13px;font-weight:900;padding:14px 22px;text-decoration:none;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;letter-spacing:0.06em">MEMBERS</a>
   </div>
 </header>
 
 <section id="top" data-hero style="display:grid;grid-template-columns:1.02fr 1fr;border-bottom:1px solid #242724">
   <div data-cell data-herotext style="padding:84px 56px 76px 24px;max-width:784px;margin-left:auto;width:100%">
-    <div style="color:#fce300;font-size:11px;font-weight:900;letter-spacing:0.22em;margin-bottom:22px">MEMBERS ONLY · FRANKLIN, NEBRASKA</div>
+    <div class="eyebrow" style="margin-bottom:22px">MEMBERS ONLY &middot; FRANKLIN, NEBRASKA</div>
     <h1 style="font-size:clamp(42px,5.8vw,78px);line-height:0.94;letter-spacing:-0.035em;font-weight:900;margin:0 0 22px">Golf every day<br>of the year.</h1>
     <p style="font-size:19px;line-height:1.5;color:#b4b8b3;max-width:34ch;margin:0 0 34px">Uneekor simulator, 4K projector, fifteen foot screen. Unlimited for members.</p>
     <div style="display:flex;flex-wrap:wrap;gap:12px">
-      <a href="#reserve" style="background:#fce300;color:#0a0b0b;font-size:16px;font-weight:900;padding:19px 28px;text-decoration:none;min-height:56px;display:inline-flex;align-items:center;gap:10px">
-        Reserve a time
+      <a href="/members" class="btn">
+        Members, book a time
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
       </a>
-      <a href="#membership" style="border:1.5px solid #4a4e49;color:#eef0ec;font-size:16px;font-weight:800;padding:19px 28px;text-decoration:none;min-height:56px;display:inline-flex;align-items:center">Become a member</a>
+      <a href="#membership" class="btn-ghost">Become a member</a>
     </div>
   </div>
   <div data-heromedia style="position:relative;border-left:1px solid #242724;min-height:500px">
@@ -86,7 +93,7 @@
 </section>
 
 <section style="border-bottom:1px solid #242724;background:#131514">
-  <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr)" data-stack-2>
+  <div class="wrap" style="display:grid;grid-template-columns:repeat(4,1fr)" data-stack-2>
     <div style="padding:24px 20px 24px 0">
       <div style="font-size:24px;font-weight:900;letter-spacing:-0.02em">Uneekor</div>
       <div style="font-size:10.5px;font-weight:800;letter-spacing:0.16em;color:#83887f;margin-top:6px">LAUNCH MONITOR</div>
@@ -100,61 +107,16 @@
       <div style="font-size:10.5px;font-weight:800;letter-spacing:0.16em;color:#83887f;margin-top:6px">SCREEN</div>
     </div>
     <div style="padding:24px 0 24px 20px;border-left:1px solid #242724">
-      <div style="font-size:24px;font-weight:900;letter-spacing:-0.02em">2 × 75"</div>
+      <div style="font-size:24px;font-weight:900;letter-spacing:-0.02em">2 &times; 75"</div>
       <div style="font-size:10.5px;font-weight:800;letter-spacing:0.16em;color:#83887f;margin-top:6px">TVS</div>
     </div>
   </div>
 </section>
 
-<section id="swag" style="border-bottom:1px solid #242724">
-  <div style="max-width:1280px;margin:0 auto;padding:56px 24px">
-    <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:26px">
-      <h2 style="font-size:clamp(28px,3vw,40px);font-weight:900;letter-spacing:-0.03em;margin:0">308 Swag</h2>
-      <span style="font-size:14.5px;color:#83887f">Pre-order. To the printer 8/31.</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px" data-stack-2>
-      <div style="border:1px solid #2d302c;background:#101211;display:flex;flex-direction:column">
-        <div style="height:220px;background:#191b19;border-bottom:1px solid #242724">
-          <img src="uploads/Hoodie.webp" alt="Augusta Local 308 hoodie, front and back" loading="lazy" style="width:100%;height:220px;object-fit:cover">
-        </div>
-        <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
-          <div>
-            <div style="font-size:16.5px;font-weight:900">Hoodie, black</div>
-            <div style="font-size:11.5px;font-weight:700;letter-spacing:0.1em;color:#83887f;margin-top:4px">LOW STOCK</div>
-          </div>
-          <div style="white-space:nowrap"><span style="color:#83887f;text-decoration:line-through;font-size:13.5px">$50</span> <span style="font-weight:900;font-size:18px;color:#fce300">$45</span></div>
-        </div>
-        <a href="https://buy.stripe.com/dRm4gy8pK1MH9Vp2aY4wM04" target="_blank" rel="noopener" style="margin:0 18px 18px;border:1.5px solid #4a4e49;color:#eef0ec;font-size:14px;font-weight:800;padding:13px 16px;text-decoration:none;min-height:46px;display:flex;align-items:center;justify-content:space-between">Pre-order<span>→</span></a>
-      </div>
-      <div style="border:1px solid #2d302c;background:#101211;display:flex;flex-direction:column">
-        <div style="height:220px;background:#191b19;border-bottom:1px solid #242724">
-          <img src="uploads/TShirt.webp" alt="Augusta Local 308 t-shirt, front and back" loading="lazy" style="width:100%;height:220px;object-fit:cover">
-        </div>
-        <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
-          <div>
-            <div style="font-size:16.5px;font-weight:900">T-shirt</div>
-            <div style="font-size:11.5px;font-weight:700;letter-spacing:0.1em;color:#83887f;margin-top:4px">PRE-ORDER</div>
-          </div>
-          <div style="font-weight:900;font-size:18px">$22</div>
-        </div>
-        <a href="https://buy.stripe.com/aFa8wO8pKdvp2sXaHu4wM05" target="_blank" rel="noopener" style="margin:0 18px 18px;border:1.5px solid #4a4e49;color:#eef0ec;font-size:14px;font-weight:800;padding:13px 16px;text-decoration:none;min-height:46px;display:flex;align-items:center;justify-content:space-between">Pre-order<span>→</span></a>
-      </div>
-      <div style="border:1px solid #2d302c;background:#101211;padding:22px;display:flex;flex-direction:column;justify-content:space-between">
-        <div>
-          <div style="color:#fce300;font-size:11px;font-weight:900;letter-spacing:0.18em;margin-bottom:12px">GIFT IT</div>
-          <div style="font-size:21px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-bottom:10px">Give a year of golf.</div>
-          <p style="font-size:14.5px;line-height:1.55;color:#9ba09a;margin:0">A membership in someone else's name. Best gift in the 308.</p>
-        </div>
-        <a href="https://buy.stripe.com/8x2aEW9tO9f9ffJeXK4wM06" target="_blank" rel="noopener" style="margin-top:22px;background:#fce300;color:#0a0b0b;font-size:14px;font-weight:900;padding:13px 16px;text-decoration:none;min-height:46px;display:flex;align-items:center;justify-content:space-between">Gift a membership<span>→</span></a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="membership" style="border-bottom:1px solid #242724;background:#131514">
-  <div style="max-width:1280px;margin:0 auto;padding:56px 24px">
+  <div class="wrap" style="padding:56px 24px">
     <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:28px">
-      <h2 style="font-size:clamp(28px,3.2vw,42px);font-weight:900;letter-spacing:-0.03em;margin:0">Membership</h2>
+      <h2 class="h2">Membership</h2>
       <span style="font-size:14.5px;color:#83887f">One rate. Unlimited play.</span>
     </div>
 
@@ -174,8 +136,8 @@
             <div style="font-size:34px;font-weight:900;letter-spacing:-0.03em;line-height:1">$550</div>
           </div>
           <div style="margin-top:22px;display:flex;gap:10px">
-            <a href="https://buy.stripe.com/dRm3cudK49f9aZt8zm4wM00" target="_blank" rel="noopener" style="flex:1;background:#fce300;color:#0a0b0b;font-size:14px;font-weight:900;padding:16px 14px;text-decoration:none;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center">Family, $850/yr</a>
-            <a href="https://buy.stripe.com/4gMfZg21m2QL2sXdTG4wM01" target="_blank" rel="noopener" style="flex:1;background:#fce300;color:#0a0b0b;font-size:14px;font-weight:900;padding:16px 14px;text-decoration:none;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center">Single, $550/yr</a>
+            <a href="https://buy.stripe.com/dRm3cudK49f9aZt8zm4wM00" target="_blank" rel="noopener" class="btn" style="flex:1;font-size:14px;padding:16px 14px;text-align:center">Family, $850/yr</a>
+            <a href="https://buy.stripe.com/4gMfZg21m2QL2sXdTG4wM01" target="_blank" rel="noopener" class="btn" style="flex:1;font-size:14px;padding:16px 14px;text-align:center">Single, $550/yr</a>
           </div>
         </div>
       </div>
@@ -194,207 +156,28 @@
             <div style="font-size:34px;font-weight:900;letter-spacing:-0.03em;line-height:1">$50</div>
           </div>
           <div style="margin-top:22px;display:flex;gap:10px">
-            <a href="https://buy.stripe.com/eVq6oG21m1MHaZt4j64wM02" target="_blank" rel="noopener" style="flex:1;border:1.5px solid #4a4e49;color:#eef0ec;font-size:14px;font-weight:900;padding:16px 14px;text-decoration:none;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center">Family, $75/mo</a>
-            <a href="https://buy.stripe.com/5kQ9ASfSc3UP4B54j64wM03" target="_blank" rel="noopener" style="flex:1;border:1.5px solid #4a4e49;color:#eef0ec;font-size:14px;font-weight:900;padding:16px 14px;text-decoration:none;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center">Single, $50/mo</a>
+            <a href="https://buy.stripe.com/eVq6oG21m1MHaZt4j64wM02" target="_blank" rel="noopener" class="btn-ghost" style="flex:1;font-size:14px;padding:16px 14px;text-align:center">Family, $75/mo</a>
+            <a href="https://buy.stripe.com/5kQ9ASfSc3UP4B54j64wM03" target="_blank" rel="noopener" class="btn-ghost" style="flex:1;font-size:14px;padding:16px 14px;text-align:center">Single, $50/mo</a>
           </div>
         </div>
       </div>
     </div>
 
     <div style="border:1px solid #2d302c;padding:18px 22px;display:flex;flex-wrap:wrap;align-items:baseline;gap:14px">
-      <span style="font-size:11px;font-weight:900;letter-spacing:0.16em;color:#fce300">GUESTS</span>
+      <span class="eyebrow">GUESTS</span>
       <span style="font-size:15.5px;color:#cdd0cb">$20 per person, and always with a member.</span>
     </div>
   </div>
 </section>
 
-<section id="reserve" style="border-bottom:1px solid #242724">
-  <div style="max-width:1280px;margin:0 auto;padding:56px 24px">
-    <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:24px">
-      <h2 style="font-size:clamp(28px,3.2vw,42px);font-weight:900;letter-spacing:-0.03em;margin:0">Reserve</h2>
-      <span style="font-size:14.5px;color:#83887f">Members only. Log in to book.</span>
-    </div>
-
-    <div id="al308-login-gate" style="border:1px solid #2d302c;background:#101211;padding:32px;max-width:420px">
-      <div style="font-size:15px;color:#cdd0cb;margin-bottom:16px">Enter the email on your membership. We'll send you a login link.</div>
-      <form id="al308-login-form" style="display:flex;gap:10px;flex-wrap:wrap">
-        <input id="al308-login-email" type="email" required placeholder="you@email.com" style="flex:1;min-width:180px;background:#0a0b0b;border:1px solid #2d302c;color:#f4f4f1;padding:13px 14px;font-size:14.5px">
-        <button type="submit" style="background:#fce300;color:#0a0b0b;font-size:14px;font-weight:900;padding:13px 20px;border:none;cursor:pointer;min-height:46px">Send link</button>
-      </form>
-      <div id="al308-login-msg" style="margin-top:14px;font-size:13.5px;color:#9ba09a"></div>
-    </div>
-
-    <div id="al308-member-view" style="display:none">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:18px">
-        <div style="font-size:13.5px;color:#9ba09a">Logged in as <span id="al308-member-email" style="color:#eef0ec;font-weight:700"></span></div>
-        <a href="/.netlify/functions/logout" style="font-size:13px;color:#9ba09a;text-decoration:underline">Log out</a>
-      </div>
-      <div id="al308-bookings" style="margin-bottom:22px"></div>
-
-      <div style="border:1px solid #2d302c;background:#101211;margin-bottom:18px">
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid #242724">
-          <div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#fce300">WHO'S ON THE SIM</div>
-          <div style="font-size:12.5px;color:#5f635d">Next three weeks. Members only.</div>
-        </div>
-        <div id="al308-schedule" style="padding:6px 18px 16px"></div>
-      </div>
-
-      <div style="border:1px solid #2d302c;background:#101211;padding:16px">
-        <div style="width:100%;height:680px;overflow:scroll" id="my-cal-inline-bookbay"></div>
-      </div>
-    </div>
-
-    <div style="margin-top:20px;font-size:14px;color:#83887f">Or text JD directly: <a href="sms:+14022157000" style="color:#fce300;text-decoration:none;font-weight:700">402-215-7000</a></div>
-  </div>
-</section>
-
-<script>
-(function(){
-  var gate = document.getElementById('al308-login-gate');
-  var memberView = document.getElementById('al308-member-view');
-  var form = document.getElementById('al308-login-form');
-  var msg = document.getElementById('al308-login-msg');
-  var emailInput = document.getElementById('al308-login-email');
-  var bookingsEl = document.getElementById('al308-bookings');
-  var emailLabel = document.getElementById('al308-member-email');
-
-  function fmt(dt) {
-    try { return new Date(dt).toLocaleString('en-US', {weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}); }
-    catch(e){ return dt; }
-  }
-
-  function renderBookings(data) {
-    var html = '';
-    if (data.upcoming && data.upcoming.length) {
-      html += '<div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#83887f;margin-bottom:8px">UPCOMING</div>';
-      data.upcoming.forEach(function(b){ html += '<div style="padding:12px 0;border-bottom:1px solid #242724;font-size:14.5px">'+fmt(b.start)+'</div>'; });
-    }
-    if (data.past && data.past.length) {
-      html += '<div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#83887f;margin:18px 0 8px">PAST</div>';
-      data.past.slice(0,10).forEach(function(b){ html += '<div style="padding:12px 0;border-bottom:1px solid #242724;font-size:14.5px;color:#83887f">'+fmt(b.start)+'</div>'; });
-    }
-    if (!html) html = '<div style="font-size:14px;color:#83887f">No bookings yet.</div>';
-    bookingsEl.innerHTML = html;
-  }
-
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-    });
-  }
-
-  function dayKey(dt) {
-    try { return new Date(dt).toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'}); }
-    catch(e){ return ''; }
-  }
-
-  function timeRange(start, end) {
-    var opts = {hour:'numeric', minute:'2-digit'};
-    try {
-      var s = new Date(start).toLocaleTimeString('en-US', opts);
-      var e = new Date(end).toLocaleTimeString('en-US', opts);
-      return s + ' to ' + e;
-    } catch(err){ return ''; }
-  }
-
-  // Live members calendar. Server decides what this member may see; names come
-  // back already reduced to a first name and last initial, never emails.
-  function loadSchedule() {
-    var el = document.getElementById('al308-schedule');
-    if (!el) return;
-    el.innerHTML = '<div style="font-size:14px;color:#5f635d;padding:12px 0">Loading...</div>';
-
-    fetch('/.netlify/functions/schedule', {credentials:'same-origin'})
-      .then(function(r){ return r.ok ? r.json() : Promise.reject(r); })
-      .then(function(data){
-        var list = data.bookings || [];
-        if (!list.length) {
-          el.innerHTML = '<div style="font-size:14.5px;color:#83887f;padding:12px 0">Nothing booked yet. The place is yours.</div>';
-          return;
-        }
-        var html = '';
-        var lastDay = null;
-        list.forEach(function(b){
-          var d = dayKey(b.start);
-          if (d !== lastDay) {
-            lastDay = d;
-            html += '<div style="font-size:11px;font-weight:900;letter-spacing:0.14em;color:#5f635d;margin:16px 0 4px">' + esc(d).toUpperCase() + '</div>';
-          }
-          html += '<div style="display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid #1c1f1c;font-size:14.5px">' +
-                    '<span style="color:' + (b.mine ? '#fce300' : '#d4d7d2') + ';font-weight:' + (b.mine ? '900' : '700') + '">' + esc(b.who) + (b.mine ? ' (you)' : '') + '</span>' +
-                    '<span style="color:#83887f;white-space:nowrap">' + esc(timeRange(b.start, b.end)) + '</span>' +
-                  '</div>';
-        });
-        el.innerHTML = html;
-      })
-      .catch(function(){
-        el.innerHTML = '<div style="font-size:14px;color:#83887f;padding:12px 0">Calendar is unavailable right now.</div>';
-      });
-  }
-
-  function loadCal() {
-    if (window.__al308CalLoaded) return;
-    window.__al308CalLoaded = true;
-    (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-    Cal("init", "bookbay", {origin:"https://app.cal.com"});
-    Cal.config = Cal.config || {};
-    Cal.config.forwardQueryParams = true;
-    Cal.ns.bookbay("inline", {
-      elementOrSelector:"#my-cal-inline-bookbay",
-      config: {"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"dark"},
-      calLink: "al308/bookbay",
-    });
-    Cal.ns.bookbay("ui", {"cssVarsPerTheme":{"light":{"cal-brand":"#fce300"},"dark":{"cal-brand":"#fce300"}},"hideEventTypeDetails":false,"layout":"month_view"});
-  }
-
-  fetch('/.netlify/functions/me', {credentials:'same-origin'})
-    .then(function(r){ return r.ok ? r.json() : Promise.reject(r); })
-    .then(function(data){
-      gate.style.display = 'none';
-      memberView.style.display = 'block';
-      emailLabel.textContent = data.email;
-      renderBookings(data);
-      loadSchedule();
-      loadCal();
-    })
-    .catch(function(){
-      var params = new URLSearchParams(location.search);
-      if (params.get('login') === 'expired') {
-        msg.textContent = "That link expired or wasn't valid. Enter your email again.";
-        msg.style.color = '#e2725b';
-      }
-    });
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    msg.style.color = '#9ba09a';
-    msg.textContent = 'Sending...';
-    fetch('/.netlify/functions/request-login', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({email: emailInput.value})
-    })
-      .then(function(r){ return r.json().then(function(d){ return {ok: r.ok, data: d}; }); })
-      .then(function(res){
-        msg.textContent = res.data.message || 'Check your inbox.';
-        msg.style.color = res.ok ? '#9ba09a' : '#e2725b';
-      })
-      .catch(function(){
-        msg.style.color = '#e2725b';
-        msg.textContent = 'Something went wrong. Text JD instead: 402-215-7000';
-      });
-  });
-})();
-</script>
-
-<section id="league" style="border-bottom:1px solid #242724;background:#131514">
-  <div style="max-width:1280px;margin:0 auto;padding:56px 24px;display:grid;grid-template-columns:1fr 1fr;gap:44px" data-stack>
+<section id="league" style="border-bottom:1px solid #242724">
+  <div class="wrap" style="padding:56px 24px;display:grid;grid-template-columns:1fr 1fr;gap:44px" data-stack>
     <div>
-      <h2 style="font-size:clamp(28px,3vw,40px);font-weight:900;letter-spacing:-0.03em;margin:0 0 14px">League</h2>
+      <h2 class="h2" style="margin-bottom:14px">League</h2>
       <p style="font-size:16.5px;line-height:1.55;color:#b4b8b3;max-width:36ch;margin:0 0 24px">Handicapped, played on your own schedule. Standings post when the last card is in.</p>
       <!-- STANDINGS: publish the Google Sheet (File > Share > Publish to web),
            then replace this whole <span> block with:
-           <a href="PASTE_PUBLISHED_SHEET_URL" target="_blank" rel="noopener" style="background:#fce300;color:#0a0b0b;font-size:15px;font-weight:900;padding:17px 24px;text-decoration:none;min-height:52px;display:inline-flex;align-items:center;gap:10px">See current standings</a>
+           <a href="PASTE_PUBLISHED_SHEET_URL" target="_blank" rel="noopener" class="btn">See current standings</a>
            Until then this stays a label, not a link to nowhere. -->
       <span style="border:1.5px solid #2d302c;color:#83887f;font-size:15px;font-weight:800;padding:17px 24px;min-height:52px;display:inline-flex;align-items:center">
         Standings post after the first week
@@ -411,10 +194,10 @@
   </div>
 </section>
 
-<section id="room" style="border-bottom:1px solid #242724">
-  <div style="max-width:1280px;margin:0 auto;padding:56px 24px;display:grid;grid-template-columns:1fr 1.25fr;gap:44px;align-items:start" data-stack>
+<section id="room" style="border-bottom:1px solid #242724;background:#131514">
+  <div class="wrap" style="padding:56px 24px;display:grid;grid-template-columns:1fr 1.25fr;gap:44px;align-items:start" data-stack>
     <div>
-      <h2 style="font-size:clamp(28px,3vw,40px);font-weight:900;letter-spacing:-0.03em;margin:0 0 14px">The room</h2>
+      <h2 class="h2" style="margin-bottom:14px">The room</h2>
       <p style="font-size:16.5px;line-height:1.55;color:#b4b8b3;max-width:34ch;margin:0 0 24px">Blacked out, real turf, screen wall to wall. Two 75 inch TVs so the group that is not swinging still has the game on.</p>
       <div style="border-top:1px solid #242724">
         <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #242724;font-size:14.5px"><span style="font-weight:800">Simulator</span><span style="color:#9ba09a">Uneekor, 4K</span></div>
@@ -429,8 +212,54 @@
   </div>
 </section>
 
+<section id="swag" style="border-bottom:1px solid #242724">
+  <div class="wrap" style="padding:56px 24px">
+    <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:26px">
+      <h2 class="h2">308 Swag</h2>
+      <!-- TODO JD: put a real deadline back here, or leave it as is. -->
+      <span style="font-size:14.5px;color:#83887f">Pre-order.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px" data-stack-2>
+      <div class="panel" style="display:flex;flex-direction:column">
+        <div style="height:220px;background:#191b19;border-bottom:1px solid #242724">
+          <img src="uploads/Hoodie.webp" alt="Augusta Local 308 hoodie, front and back" loading="lazy" style="width:100%;height:220px;object-fit:cover">
+        </div>
+        <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+          <div>
+            <div style="font-size:16.5px;font-weight:900">Hoodie, black</div>
+            <div style="font-size:11.5px;font-weight:700;letter-spacing:0.1em;color:#83887f;margin-top:4px">LOW STOCK</div>
+          </div>
+          <div style="white-space:nowrap"><span style="color:#83887f;text-decoration:line-through;font-size:13.5px">$50</span> <span style="font-weight:900;font-size:18px;color:#fce300">$45</span></div>
+        </div>
+        <a href="https://buy.stripe.com/dRm4gy8pK1MH9Vp2aY4wM04" target="_blank" rel="noopener" class="btn-ghost" style="margin:0 18px 18px;font-size:14px;padding:13px 16px;justify-content:space-between">Pre-order<span>&rarr;</span></a>
+      </div>
+      <div class="panel" style="display:flex;flex-direction:column">
+        <div style="height:220px;background:#191b19;border-bottom:1px solid #242724">
+          <img src="uploads/TShirt.webp" alt="Augusta Local 308 t-shirt, front and back" loading="lazy" style="width:100%;height:220px;object-fit:cover">
+        </div>
+        <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+          <div>
+            <div style="font-size:16.5px;font-weight:900">T-shirt</div>
+            <div style="font-size:11.5px;font-weight:700;letter-spacing:0.1em;color:#83887f;margin-top:4px">PRE-ORDER</div>
+          </div>
+          <div style="font-weight:900;font-size:18px">$22</div>
+        </div>
+        <a href="https://buy.stripe.com/aFa8wO8pKdvp2sXaHu4wM05" target="_blank" rel="noopener" class="btn-ghost" style="margin:0 18px 18px;font-size:14px;padding:13px 16px;justify-content:space-between">Pre-order<span>&rarr;</span></a>
+      </div>
+      <div class="panel" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px">GIFT IT</div>
+          <div style="font-size:21px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-bottom:10px">Give a year of golf.</div>
+          <p style="font-size:14.5px;line-height:1.55;color:#9ba09a;margin:0">A membership in someone else's name. Best gift in the 308.</p>
+        </div>
+        <a href="https://buy.stripe.com/8x2aEW9tO9f9ffJeXK4wM06" target="_blank" rel="noopener" class="btn" style="margin-top:22px;font-size:14px;padding:13px 16px;justify-content:space-between">Gift a membership<span>&rarr;</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
-  <div style="max-width:1280px;margin:0 auto;padding:38px 24px;display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:32px" data-stack>
+  <div class="wrap" style="padding:38px 24px;display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:32px" data-stack>
     <div style="display:flex;align-items:center;gap:14px">
       <img src="uploads/AL308%20Logo.webp" alt="" loading="lazy" style="height:44px;width:auto">
       <div style="font-size:12.5px;color:#83887f;line-height:1.6">
@@ -440,8 +269,8 @@
     </div>
     <div style="font-size:13.5px;line-height:1.9">
       <div style="font-size:10.5px;font-weight:800;letter-spacing:0.16em;color:#5f635d;margin-bottom:8px">FIND US</div>
-      <div style="color:#9ba09a">1516 L St</div>
-      <div style="color:#9ba09a">Franklin, NE 68930</div>
+      <div style="color:#9ba09a">1516 L Street</div>
+      <div style="color:#9ba09a">Franklin, NE 68939</div>
       <div style="color:#9ba09a">Open by reservation</div>
     </div>
     <div style="font-size:13.5px;line-height:1.9">
@@ -451,7 +280,8 @@
     </div>
     <div style="font-size:13.5px;line-height:1.9">
       <div style="font-size:10.5px;font-weight:800;letter-spacing:0.16em;color:#5f635d;margin-bottom:8px">MEMBERS</div>
-      <div><a href="https://billing.stripe.com/p/login/dRm3cudK49f9aZt8zm4wM00" target="_blank" rel="noopener" style="text-decoration:none;font-weight:700">Manage your membership</a></div>
+      <div><a href="/members" style="text-decoration:none;font-weight:700">Book the bay</a></div>
+      <div><a href="/members#account" style="text-decoration:none;font-weight:700">Your account</a></div>
     </div>
   </div>
 </footer>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard · Augusta Local 308</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="uploads/AL308%20Logo.webp" type="image/webp">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&display=swap">
+<style>
+  /* Dark only, on purpose: this page lives inside a site that is dark only.
+     Data colors are NOT the brand yellow. Brand yellow (#fce300) sits at
+     OKLCH L 0.91, outside the 0.48-0.67 mark band, so it is used for interface
+     accents and never as a data mark. The two data hues below were validated
+     against this page's panel surface (#101211):
+       node scripts/validate_palette.js "#c98500,#3987e5" --mode dark --surface "#101211" --pairs all
+       -> all checks pass (CVD dE 27.4 protan, 24.3 tritan; normal dE 30.7) */
+  :root{
+    --page:#0a0b0b;
+    --surface-1:#101211;
+    --ink:#f4f4f1;
+    --ink-2:#b4b8b3;
+    --muted:#83887f;
+    --grid:#1c1f1c;
+    --baseline:#2d302c;
+    --brand:#fce300;
+    --series-1:#c98500;   /* membership revenue, and hours on the sim */
+    --series-2:#3987e5;   /* everything else */
+    --good:#0ca30c;
+    --warning:#fab219;
+    --critical:#d03b3b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--brand)}
+  :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+  .panel{background:var(--surface-1);border:1px solid var(--baseline)}
+  .eyebrow{font-size:10.5px;font-weight:900;letter-spacing:0.16em;color:var(--muted)}
+  .muted{color:var(--muted);font-size:13px}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  header{position:sticky;top:0;z-index:20;background:rgba(10,11,11,.96);border-bottom:1px solid var(--baseline)}
+  .rangebtn{background:transparent;border:1px solid var(--baseline);color:var(--ink-2);font-family:inherit;font-size:13px;font-weight:800;padding:9px 14px;cursor:pointer}
+  .rangebtn[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#0a0b0b}
+  .linkbtn{background:none;border:none;color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline}
+
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0}
+  .tile{padding:18px 20px}
+  .tile .v{font-size:38px;font-weight:900;letter-spacing:-0.03em;line-height:1.05;margin-top:10px}
+  .tile .sub{font-size:12.5px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px}
+
+  .chart{padding:20px 22px 18px;margin-bottom:16px}
+  .chart h2{font-size:17px;font-weight:900;letter-spacing:-0.01em;margin:0}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--ink-2)}
+  .sw{width:11px;height:11px;border-radius:2px;display:inline-block;margin-right:7px;vertical-align:-1px}
+
+  .plot{display:flex;align-items:flex-end;gap:2px;height:190px;border-bottom:1px solid var(--baseline);margin-top:18px;position:relative}
+  .gridline{position:absolute;left:0;right:0;height:1px;background:var(--grid)}
+  .axismax{position:absolute;top:-9px;left:0;font-size:10.5px;color:var(--muted);background:var(--surface-1);padding-right:6px;font-variant-numeric:tabular-nums}
+  .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;cursor:default;min-width:0}
+  .col:hover .seg{filter:brightness(1.18)}
+  .seg{width:100%;border-radius:0}
+  .seg.top{border-radius:4px 4px 0 0}
+  .seg + .seg{margin-bottom:2px}
+  .xlabels{display:flex;gap:2px;margin-top:8px}
+  .xlabels span{flex:1;text-align:center;font-size:10.5px;color:var(--muted);letter-spacing:.02em;min-width:0;overflow:hidden;white-space:nowrap}
+  .peak{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:6px;font-size:11.5px;font-weight:800;color:var(--ink);white-space:nowrap}
+
+  .tip{position:fixed;z-index:60;pointer-events:none;background:#1a1c1a;border:1px solid var(--baseline);padding:10px 12px;font-size:12.5px;line-height:1.55;box-shadow:0 6px 22px rgba(0,0,0,.55);display:none;white-space:nowrap}
+  .tip b{color:var(--ink)}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{text-align:left;font-size:10.5px;font-weight:900;letter-spacing:0.14em;color:var(--muted);padding:0 12px 10px 0;border-bottom:1px solid var(--baseline);white-space:nowrap}
+  td{padding:12px 12px 12px 0;border-bottom:1px solid var(--grid);vertical-align:top}
+  td:last-child,th:last-child{padding-right:0;text-align:right}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:7px;vertical-align:0}
+  .scroll{overflow-x:auto}
+
+  @media (max-width:900px){
+    .tiles{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:560px){
+    .tiles{grid-template-columns:1fr}
+    .xlabels span{font-size:9.5px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap" style="padding:14px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <a href="/" style="display:flex;align-items:center;gap:11px;text-decoration:none">
+      <img src="uploads/AL308%20Logo.webp" alt="" style="height:30px;width:auto">
+      <span style="color:var(--ink);font-size:12.5px;font-weight:900;letter-spacing:0.14em">DASHBOARD</span>
+    </a>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button class="rangebtn" data-months="6">6 mo</button>
+      <button class="rangebtn" data-months="12" aria-pressed="true">12 mo</button>
+      <button class="rangebtn" data-months="24">24 mo</button>
+      <a href="/" style="font-size:13px;font-weight:800;text-decoration:none;margin-left:10px">Back to site</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="padding:8px 24px 60px">
+  <div id="status" class="muted" style="padding:40px 0">Loading...</div>
+  <div id="dash" style="display:none"></div>
+</main>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var months = 12;
+  var tip = document.getElementById('tip');
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function money(cents) {
+    var n = (cents || 0) / 100;
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+  function monthLabel(key) {
+    var parts = String(key).split('-');
+    var d = new Date(Date.UTC(+parts[0], +parts[1] - 1, 1));
+    return d.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+  }
+  function monthLong(key) {
+    var parts = String(key).split('-');
+    var d = new Date(Date.UTC(+parts[0], +parts[1] - 1, 1));
+    return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  }
+  function dateShort(iso) {
+    if (!iso) return '';
+    try { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+    catch (e) { return ''; }
+  }
+
+  var STATUS = {
+    active:   { label: 'Paying',   color: 'var(--good)' },
+    trialing: { label: 'Trial',    color: 'var(--good)' },
+    comp:     { label: 'Comped',   color: 'var(--series-2)' },
+    past_due: { label: 'Past due', color: 'var(--warning)' },
+    unpaid:   { label: 'Unpaid',   color: 'var(--critical)' },
+    incomplete: { label: 'Incomplete', color: 'var(--warning)' },
+    canceled: { label: 'Cancelled', color: 'var(--muted)' },
+    incomplete_expired: { label: 'Expired', color: 'var(--muted)' },
+    none:     { label: 'No plan',  color: 'var(--muted)' }
+  };
+
+  // Hover layer. Every bar gets one; the tooltip is the only place per-month
+  // numbers appear, so the plot itself stays free of labels.
+  function bindTip(el, html) {
+    el.addEventListener('mouseenter', function () { tip.innerHTML = html; tip.style.display = 'block'; });
+    el.addEventListener('mousemove', function (e) {
+      var pad = 14;
+      var x = Math.min(e.clientX + pad, window.innerWidth - tip.offsetWidth - 8);
+      var y = Math.max(8, e.clientY - tip.offsetHeight - pad);
+      tip.style.left = x + 'px';
+      tip.style.top = y + 'px';
+    });
+    el.addEventListener('mouseleave', function () { tip.style.display = 'none'; });
+  }
+
+  // A stacked or single-series column chart. Bars are anchored to the
+  // baseline, 4px rounded at the top only, with a 2px gap between segments.
+  function barChart(opts) {
+    var rows = opts.rows;
+    var max = Math.max.apply(null, rows.map(opts.total).concat([1]));
+    var id = opts.id;
+
+    var html = '<section class="panel chart">' +
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap">' +
+        '<div><h2>' + esc(opts.title) + '</h2>' +
+        '<div class="muted" style="margin-top:5px">' + esc(opts.subtitle || '') + '</div></div>' +
+        (opts.legend ? '<div class="legend">' + opts.legend + '</div>' : '') +
+      '</div>' +
+      '<div class="plot" id="' + id + '-plot">' +
+        '<div class="gridline" style="top:0"></div>' +
+        '<div class="gridline" style="top:50%"></div>' +
+        '<div class="axismax">' + esc(opts.axisLabel(max)) + '</div>';
+
+    rows.forEach(function (r, i) {
+      var total = opts.total(r);
+      var h = Math.round((total / max) * 100);
+      html += '<div class="col" data-i="' + i + '">';
+      if (i === rows.length - 1 && total > 0) {
+        html += '<div class="peak">' + esc(opts.peakLabel(r)) + '</div>';
+      }
+      var segs = opts.segments(r);
+      // Painted top-down so the first segment in the array sits on top.
+      segs.forEach(function (s, si) {
+        if (!s.value) return;
+        var sh = Math.round((s.value / max) * 100);
+        html += '<div class="seg' + (si === 0 ? ' top' : '') + '" style="height:' + sh + '%;background:' + s.color + '"></div>';
+      });
+      if (!total) html += '<div style="height:2px;background:var(--grid)"></div>';
+      html += '</div>';
+    });
+
+    html += '</div><div class="xlabels">';
+    rows.forEach(function (r) { html += '<span>' + esc(opts.xLabel(r)) + '</span>'; });
+    html += '</div>';
+    html += '<div style="margin-top:14px"><button class="linkbtn" data-table="' + id + '">Show the numbers</button>' +
+      '<div id="' + id + '-table" style="display:none;margin-top:14px" class="scroll"></div></div>';
+    html += '</section>';
+    return html;
+  }
+
+  function wireChart(id, rows, opts) {
+    var plot = document.getElementById(id + '-plot');
+    if (plot) {
+      Array.prototype.forEach.call(plot.querySelectorAll('.col'), function (col) {
+        bindTip(col, opts.tip(rows[+col.getAttribute('data-i')]));
+      });
+    }
+    var btn = document.querySelector('[data-table="' + id + '"]');
+    var box = document.getElementById(id + '-table');
+    if (btn && box) {
+      btn.addEventListener('click', function () {
+        var open = box.style.display !== 'none';
+        box.style.display = open ? 'none' : 'block';
+        btn.textContent = open ? 'Show the numbers' : 'Hide the numbers';
+        if (!open && !box.innerHTML) box.innerHTML = opts.table(rows);
+      });
+    }
+  }
+
+  function delta(current, previous) {
+    if (!previous) return '';
+    var pct = Math.round(((current - previous) / previous) * 100);
+    if (!isFinite(pct) || pct === 0) return '<span style="color:var(--muted)">flat vs last month</span>';
+    var up = pct > 0;
+    // Arrow plus the word, so the direction never rests on color alone.
+    return '<span style="color:' + (up ? 'var(--good)' : 'var(--critical)') + ';font-weight:800">' +
+      (up ? '&uarr; up ' : '&darr; down ') + Math.abs(pct) + '%</span>' +
+      '<span style="color:var(--muted)">&nbsp;vs last month</span>';
+  }
+
+  function render(d) {
+    var rev = d.revenue || [];
+    var use = d.usage || [];
+    var last = rev[rev.length - 1] || { total: 0, membership: 0, other: 0 };
+    var prev = rev[rev.length - 2] || null;
+
+    var html = '';
+
+    if (d.warnings && d.warnings.length) {
+      html += '<div class="panel" style="border-color:var(--warning);padding:16px 18px;margin-top:22px">' +
+        '<div class="eyebrow" style="color:var(--warning);margin-bottom:8px">HEADS UP</div>';
+      d.warnings.forEach(function (w) {
+        html += '<div style="font-size:13.5px;line-height:1.6;color:var(--ink-2);margin-bottom:6px">' + esc(w) + '</div>';
+      });
+      html += '</div>';
+    }
+
+    // -- Stat tiles. No plot, so no hover layer here. --------------------
+    html += '<div class="tiles">' +
+      '<div class="panel tile"><div class="eyebrow">PAYING MEMBERS</div>' +
+        '<div class="v tnum">' + d.summary.paying + '</div>' +
+        '<div class="sub">' + (d.summary.comped ? '+ ' + d.summary.comped + ' comped' : 'no comps') + '</div></div>' +
+      '<div class="panel tile"><div class="eyebrow">NOT PAID</div>' +
+        '<div class="v tnum" style="color:' + (d.summary.atRisk ? 'var(--warning)' : 'var(--ink)') + '">' + d.summary.atRisk + '</div>' +
+        '<div class="sub">' + (d.summary.atRisk ? 'card failed or past due' : 'everyone is current') + '</div></div>' +
+      '<div class="panel tile"><div class="eyebrow">MONTHLY DUES</div>' +
+        '<div class="v tnum">' + money(d.summary.mrr) + '</div>' +
+        '<div class="sub">' + money(d.summary.annualRunRate) + ' a year at this rate</div></div>' +
+      '<div class="panel tile"><div class="eyebrow">THIS MONTH IN</div>' +
+        '<div class="v tnum">' + (d.haveRevenue ? money(last.total) : '&mdash;') + '</div>' +
+        '<div class="sub">' + (d.haveRevenue ? delta(last.total, prev && prev.total) : 'needs Charges: Read on the Stripe key') + '</div></div>' +
+      '</div>';
+
+    // -- Revenue -----------------------------------------------------------
+    if (d.haveRevenue) {
+      html += barChart({
+        id: 'rev',
+        title: 'Money in, by month',
+        subtitle: 'What actually hit Stripe, dues separated from swag and gifts. The last bar is the month so far.',
+        legend: '<span><span class="sw" style="background:var(--series-1)"></span>Membership</span>' +
+                '<span><span class="sw" style="background:var(--series-2)"></span>Swag and gifts</span>',
+        rows: rev,
+        total: function (r) { return r.total; },
+        segments: function (r) {
+          return [
+            { value: r.other, color: 'var(--series-2)' },
+            { value: r.membership, color: 'var(--series-1)' }
+          ];
+        },
+        xLabel: function (r) { return monthLabel(r.month); },
+        peakLabel: function (r) { return money(r.total); },
+        axisLabel: function (v) { return money(v); }
+      });
+    }
+
+    // -- Usage. One series, one axis. Bookings ride in the tooltip rather
+    //    than getting a second y-scale. -----------------------------------
+    html += barChart({
+      id: 'use',
+      title: 'Hours on the sim, by month',
+      subtitle: 'Time already played, not time booked ahead. Hover a bar for the booking count.',
+      legend: '',
+      rows: use,
+      total: function (r) { return r.hours; },
+      segments: function (r) { return [{ value: r.hours, color: 'var(--series-1)' }]; },
+      xLabel: function (r) { return monthLabel(r.month); },
+      peakLabel: function (r) { return r.hours + ' hrs'; },
+      axisLabel: function (v) { return Math.round(v) + ' hrs'; }
+    });
+
+    // -- Roster ------------------------------------------------------------
+    html += '<section class="panel chart"><h2>Who is paying</h2>' +
+      '<div class="muted" style="margin-top:5px">Straight from Stripe. Hours are this member over the last ' + d.months + ' months.</div>' +
+      '<div class="scroll" style="margin-top:18px"><table><thead><tr>' +
+      '<th>Member</th><th>Plan</th><th>Status</th><th>Renews</th><th>Hours</th></tr></thead><tbody>';
+    (d.rows || []).forEach(function (r) {
+      var s = STATUS[r.status] || STATUS.none;
+      html += '<tr>' +
+        '<td><div style="font-weight:800">' + esc(r.name) + '</div><div class="muted" style="font-size:12px">' + esc(r.email) + '</div></td>' +
+        '<td>' + (r.plan ? esc(r.plan) : '&mdash;') + '</td>' +
+        '<td style="white-space:nowrap"><span class="dot" style="background:' + s.color + '"></span>' + esc(s.label) +
+          (r.cancelAtPeriodEnd ? '<div class="muted" style="font-size:12px">ends at period</div>' : '') + '</td>' +
+        '<td class="tnum" style="white-space:nowrap">' + (r.renews ? esc(dateShort(r.renews)) : '&mdash;') + '</td>' +
+        '<td class="tnum">' + (r.hours || 0) + '</td>' +
+        '</tr>';
+    });
+    html += '</tbody></table></div></section>';
+
+    // -- Quiet members -----------------------------------------------------
+    html += '<section class="panel chart"><h2>Paying but not playing</h2>' +
+      '<div class="muted" style="margin-top:5px">No booking in ' + d.quietDays + ' days. These are the ones who cancel next.</div>';
+    if (!(d.quiet || []).length) {
+      html += '<div style="font-size:14px;color:var(--ink-2);margin-top:16px">Everyone has been in. Good sign.</div>';
+    } else {
+      html += '<div class="scroll" style="margin-top:18px"><table><thead><tr><th>Member</th><th>Last time in</th></tr></thead><tbody>';
+      d.quiet.forEach(function (q) {
+        html += '<tr><td><div style="font-weight:800">' + esc(q.name) + '</div>' +
+          '<div class="muted" style="font-size:12px">' + esc(q.email) + '</div></td>' +
+          '<td class="tnum">' + esc(q.lastBooking ? dateShort(q.lastBooking) : 'never') + '</td></tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+    html += '</section>';
+
+    // -- Top users ---------------------------------------------------------
+    if ((d.topMembers || []).length) {
+      html += '<section class="panel chart"><h2>Most hours</h2>' +
+        '<div class="muted" style="margin-top:5px">Last ' + d.months + ' months.</div>' +
+        '<div class="scroll" style="margin-top:18px"><table><thead><tr><th>Member</th><th>Bookings</th><th>Hours</th></tr></thead><tbody>';
+      d.topMembers.forEach(function (m) {
+        html += '<tr><td style="font-weight:800">' + esc(m.name) + '</td>' +
+          '<td class="tnum">' + m.bookings + '</td><td class="tnum">' + m.hours + '</td></tr>';
+      });
+      html += '</tbody></table></div></section>';
+    }
+
+    html += '<div class="muted" style="margin-top:22px">Pulled ' +
+      esc(new Date(d.generated).toLocaleString('en-US')) + '. Nothing here is cached.</div>';
+
+    document.getElementById('dash').innerHTML = html;
+    document.getElementById('dash').style.display = 'block';
+    document.getElementById('status').style.display = 'none';
+
+    if (d.haveRevenue) {
+      wireChart('rev', rev, {
+        tip: function (r) {
+          return '<b>' + esc(monthLong(r.month)) + '</b><br>' +
+            'Total ' + money(r.total) + '<br>' +
+            '<span class="sw" style="background:var(--series-1)"></span>Membership ' + money(r.membership) + '<br>' +
+            '<span class="sw" style="background:var(--series-2)"></span>Swag and gifts ' + money(r.other) + '<br>' +
+            '<span style="color:var(--muted)">' + r.count + ' payment' + (r.count === 1 ? '' : 's') + '</span>';
+        },
+        table: function (rows) {
+          var t = '<table><thead><tr><th>Month</th><th>Membership</th><th>Swag and gifts</th><th>Total</th></tr></thead><tbody>';
+          rows.forEach(function (r) {
+            t += '<tr><td>' + esc(monthLong(r.month)) + '</td><td class="tnum">' + money(r.membership) +
+              '</td><td class="tnum">' + money(r.other) + '</td><td class="tnum" style="font-weight:800">' + money(r.total) + '</td></tr>';
+          });
+          return t + '</tbody></table>';
+        }
+      });
+    }
+
+    wireChart('use', use, {
+      tip: function (r) {
+        return '<b>' + esc(monthLong(r.month)) + '</b><br>' +
+          r.hours + ' hours<br>' +
+          '<span style="color:var(--muted)">' + r.bookings + ' booking' + (r.bookings === 1 ? '' : 's') + '</span>';
+      },
+      table: function (rows) {
+        var t = '<table><thead><tr><th>Month</th><th>Bookings</th><th>Hours</th></tr></thead><tbody>';
+        rows.forEach(function (r) {
+          t += '<tr><td>' + esc(monthLong(r.month)) + '</td><td class="tnum">' + r.bookings +
+            '</td><td class="tnum">' + r.hours + '</td></tr>';
+        });
+        return t + '</tbody></table>';
+      }
+    });
+  }
+
+  function load() {
+    var status = document.getElementById('status');
+    status.style.display = 'block';
+    status.textContent = 'Loading...';
+    document.getElementById('dash').style.display = 'none';
+    fetch('/.netlify/functions/admin?months=' + months, { credentials: 'same-origin' })
+      .then(function (r) {
+        if (r.status === 404 || r.status === 401) {
+          status.innerHTML = 'Not found. <a href="/">Back to the site</a>';
+          throw new Error('no access');
+        }
+        if (!r.ok) throw new Error('http ' + r.status);
+        return r.json();
+      })
+      .then(render)
+      .catch(function (e) {
+        if (e.message === 'no access') return;
+        status.innerHTML = 'Could not load the numbers. <button class="linkbtn" onclick="location.reload()">Try again</button>';
+      });
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.rangebtn'), function (btn) {
+    btn.addEventListener('click', function () {
+      months = +btn.getAttribute('data-months');
+      Array.prototype.forEach.call(document.querySelectorAll('.rangebtn'), function (b) {
+        b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+      });
+      load();
+    });
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
