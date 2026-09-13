@@ -45,7 +45,7 @@
   .rangebtn[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#0a0b0b}
   .linkbtn{background:none;border:none;color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline}
 
-  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0}
+  .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:26px 0}
   .tile{padding:18px 20px}
   .tile .v{font-size:38px;font-weight:900;letter-spacing:-0.03em;line-height:1.05;margin-top:10px}
   .tile .sub{font-size:12.5px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px}
@@ -78,7 +78,7 @@
   .scroll{overflow-x:auto}
 
   @media (max-width:900px){
-    .tiles{grid-template-columns:1fr 1fr}
+    .tiles{grid-template-columns:repeat(2,1fr)}
   }
   @media (max-width:560px){
     .tiles{grid-template-columns:1fr}
@@ -139,6 +139,57 @@
     if (!iso) return '';
     try { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
     catch (e) { return ''; }
+  }
+
+  // Whether this member can log in yet, and a button to hand them a password.
+  // Only shown for people Stripe says are active, since the function refuses
+  // anyone else anyway.
+  function loginCell(r) {
+    if (r.hasPassword === undefined || r.hasPassword === null) return '<span style="color:var(--muted)">&mdash;</span>';
+    if (r.hasPassword) return '<span style="color:var(--good)">&#10003; Set</span>';
+    return '<button type="button" class="linkbtn setpw" data-email="' + esc(r.email) + '">Set password</button>';
+  }
+
+  // Easy to read over the phone, hard to guess. No lookalike characters.
+  function suggestPassword() {
+    var words = ['birdie', 'bogey', 'fairway', 'divot', 'mulligan', 'albatross', 'wedge', 'driver'];
+    var w = words[Math.floor(Math.random() * words.length)];
+    return w + '-' + String(Math.floor(1000 + Math.random() * 8999));
+  }
+
+  function wireSetPassword() {
+    Array.prototype.forEach.call(document.querySelectorAll('.setpw'), function (btn) {
+      btn.addEventListener('click', function () {
+        var email = btn.getAttribute('data-email');
+        var pw = window.prompt('Starting password for ' + email + '.\nText this to them. They can change it under Account.', suggestPassword());
+        if (pw === null) return;
+        pw = pw.trim();
+        if (pw.length < 8) { window.alert('Use at least 8 characters.'); return; }
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+        fetch('/.netlify/functions/admin-set-password', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, password: pw })
+        })
+          .then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, data: d }; }); })
+          .then(function (res) {
+            if (res.ok && res.data.ok) {
+              btn.outerHTML = '<span style="color:var(--good)">&#10003; Set</span>';
+              window.alert('Done. Text this to ' + email + ':\n\n' + pw);
+              return;
+            }
+            btn.disabled = false;
+            btn.textContent = 'Set password';
+            window.alert(res.data.message || 'Could not set that.');
+          })
+          .catch(function () {
+            btn.disabled = false;
+            btn.textContent = 'Set password';
+            window.alert('Could not set that.');
+          });
+      });
+    });
   }
 
   var STATUS = {
@@ -264,9 +315,12 @@
       '<div class="panel tile"><div class="eyebrow">PAYING MEMBERS</div>' +
         '<div class="v tnum">' + d.summary.paying + '</div>' +
         '<div class="sub">' + (d.summary.comped ? '+ ' + d.summary.comped + ' comped' : 'no comps') + '</div></div>' +
-      '<div class="panel tile"><div class="eyebrow">NOT PAID</div>' +
-        '<div class="v tnum" style="color:' + (d.summary.atRisk ? 'var(--warning)' : 'var(--ink)') + '">' + d.summary.atRisk + '</div>' +
-        '<div class="sub">' + (d.summary.atRisk ? 'card failed or past due' : 'everyone is current') + '</div></div>' +
+      '<div class="panel tile"><div class="eyebrow">NEEDS ATTENTION</div>' +
+        '<div class="v tnum" style="color:' + (d.summary.problems ? 'var(--warning)' : 'var(--ink)') + '">' + (d.summary.problems || 0) + '</div>' +
+        '<div class="sub">' + (d.summary.problems ? money(d.summary.atRiskMonthly) + ' a month at stake' : 'nothing is failing') + '</div></div>' +
+      '<div class="panel tile"><div class="eyebrow">NO PASSWORD YET</div>' +
+        '<div class="v tnum" style="color:' + ((d.needPassword || []).length ? 'var(--warning)' : 'var(--ink)') + '">' + (d.needPassword || []).length + '</div>' +
+        '<div class="sub">' + ((d.needPassword || []).length ? 'cannot log in until you set one' : 'everyone can log in') + '</div></div>' +
       '<div class="panel tile"><div class="eyebrow">MONTHLY DUES</div>' +
         '<div class="v tnum">' + money(d.summary.mrr) + '</div>' +
         '<div class="sub">' + money(d.summary.annualRunRate) + ' a year at this rate</div></div>' +
@@ -274,6 +328,30 @@
         '<div class="v tnum">' + (d.haveRevenue ? money(last.total) : '&mdash;') + '</div>' +
         '<div class="sub">' + (d.haveRevenue ? delta(last.total, prev && prev.total) : 'needs Charges: Read on the Stripe key') + '</div></div>' +
       '</div>';
+
+    // -- Money leaking. The single most important panel on this page. -----
+    if ((d.problems || []).length) {
+      html += '<section class="panel chart"><h2>Money leaking</h2>' +
+        '<div class="muted" style="margin-top:5px">Memberships that have quietly stopped collecting. ' +
+        'Fixing all of them is ' + money(d.summary.atRiskMonthly) + ' a month.</div>' +
+        '<div class="scroll" style="margin-top:18px"><table><thead><tr>' +
+        '<th>Member</th><th>Problem</th><th>What to do</th><th>Monthly</th></tr></thead><tbody>';
+      d.problems.forEach(function (x) {
+        var fix = x.kind === 'no_card'
+          ? 'Text them the billing link to add a card'
+          : x.kind === 'double_billed'
+          ? 'Cancel the extra subscription in Stripe'
+          : 'Card failed. Text them the billing link';
+        html += '<tr>' +
+          '<td><div style="font-weight:800">' + esc(x.name) + '</div>' +
+            '<div class="muted" style="font-size:12px">' + esc(x.email) + '</div></td>' +
+          '<td><span class="dot" style="background:var(--warning)"></span>' + esc(x.detail) + '</td>' +
+          '<td class="muted">' + esc(fix) + '</td>' +
+          '<td class="tnum">' + money(x.monthly || 0) + '</td>' +
+          '</tr>';
+      });
+      html += '</tbody></table></div></section>';
+    }
 
     // -- Revenue -----------------------------------------------------------
     if (d.haveRevenue) {
@@ -316,7 +394,7 @@
     html += '<section class="panel chart"><h2>Who is paying</h2>' +
       '<div class="muted" style="margin-top:5px">Straight from Stripe. Hours are this member over the last ' + d.months + ' months.</div>' +
       '<div class="scroll" style="margin-top:18px"><table><thead><tr>' +
-      '<th>Member</th><th>Plan</th><th>Status</th><th>Renews</th><th>Hours</th></tr></thead><tbody>';
+      '<th>Member</th><th>Plan</th><th>Status</th><th>Login</th><th>Renews</th><th>Hours</th></tr></thead><tbody>';
     (d.rows || []).forEach(function (r) {
       var s = STATUS[r.status] || STATUS.none;
       html += '<tr>' +
@@ -324,6 +402,7 @@
         '<td>' + (r.plan ? esc(r.plan) : '&mdash;') + '</td>' +
         '<td style="white-space:nowrap"><span class="dot" style="background:' + s.color + '"></span>' + esc(s.label) +
           (r.cancelAtPeriodEnd ? '<div class="muted" style="font-size:12px">ends at period</div>' : '') + '</td>' +
+        '<td style="white-space:nowrap">' + loginCell(r) + '</td>' +
         '<td class="tnum" style="white-space:nowrap">' + (r.renews ? esc(dateShort(r.renews)) : '&mdash;') + '</td>' +
         '<td class="tnum">' + (r.hours || 0) + '</td>' +
         '</tr>';
@@ -364,6 +443,7 @@
     document.getElementById('dash').innerHTML = html;
     document.getElementById('dash').style.display = 'block';
     document.getElementById('status').style.display = 'none';
+    wireSetPassword();
 
     if (d.haveRevenue) {
       wireChart('rev', rev, {
