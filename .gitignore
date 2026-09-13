@@ -1,9 +1,20 @@
+# macOS
 .DS_Store
 Icon
 Icon?
 Icon*
+
+# Secrets and local env
+.env
+.env.*
+.netlify/
+
+# Never commit member or financial data
 *.csv
 *.xlsx
 *.docx
 *.pdf
+
+# Old scratch
 _old_flat_to_delete/
+_to_delete/

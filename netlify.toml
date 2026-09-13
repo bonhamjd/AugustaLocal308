@@ -4,3 +4,25 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# No Content-Security-Policy on purpose: the page loads the Cal.com embed and
+# Google Fonts, and a wrong CSP breaks booking silently. Revisit only with a
+# deploy preview to test against.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    Content-Security-Policy = "frame-ancestors 'none'"
+
+[[headers]]
+  for = "/uploads/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Member data is never cached at the edge or in the browser.
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Cache-Control = "no-store"
