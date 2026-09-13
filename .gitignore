@@ -4,6 +4,9 @@ Icon
 Icon?
 Icon*
 
+# Dependencies
+node_modules/
+
 # Secrets and local env
 .env
 .env.*

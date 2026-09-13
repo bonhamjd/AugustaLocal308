@@ -1,4 +1,9 @@
-const { ENV, verify, sign } = require('./_shared');
+// Lands here from the emailed link. Issues the session, then sends the member
+// to set a password if they do not have one yet, so this is the last time they
+// need email to get in.
+
+const { ENV, verify, sessionCookie } = require('./_shared');
+const store = require('./_store');
 
 exports.handler = async (event) => {
   const token = event.queryStringParameters && event.queryStringParameters.token;
@@ -9,18 +14,17 @@ exports.handler = async (event) => {
     return { statusCode: 302, headers: { Location: site + '/?login=expired#reserve' } };
   }
 
-  const session = sign(
-    { email: data.email, purpose: 'session', exp: Date.now() + 30 * 24 * 60 * 60 * 1000 },
-    ENV.sessionSecret()
-  );
+  let hasPassword = false;
+  try {
+    const record = await store.getAuth(event, data.email);
+    hasPassword = !!(record && record.hash);
+  } catch (e) {
+    console.error('[verify-login] auth read failed:', e.message);
+  }
 
   return {
     statusCode: 302,
-    multiValueHeaders: {
-      'Set-Cookie': [
-        'al308_session=' + session + '; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000',
-      ],
-    },
-    headers: { Location: site + '/#reserve' },
+    multiValueHeaders: { 'Set-Cookie': [sessionCookie(data.email)] },
+    headers: { Location: site + (hasPassword ? '/#reserve' : '/?setpw=1#reserve') },
   };
 };

@@ -1,0 +1,12 @@
+{
+  "name": "augustalocal308",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Augusta Local 308 members site. Static page plus Netlify Functions.",
+  "scripts": {
+    "test": "node test/smoke.js"
+  },
+  "dependencies": {
+    "@netlify/blobs": "11.0.3"
+  }
+}

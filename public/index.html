@@ -28,15 +28,47 @@
   a:hover{color:#fff48a}
   ::selection{background:#fce300;color:#0a0b0b}
   :focus-visible{outline:2px solid #fce300;outline-offset:2px}
+  button{font-family:inherit}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+  .h2{font-size:clamp(28px,3.2vw,42px);font-weight:900;letter-spacing:-0.03em;margin:0}
+  .eyebrow{font-size:11px;font-weight:900;letter-spacing:0.2em;color:#fce300}
+  .panel{border:1px solid #2d302c;background:#101211}
+  .btn{background:#fce300;color:#0a0b0b;font-size:15px;font-weight:900;padding:15px 22px;border:none;cursor:pointer;min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none}
+  .btn:hover{background:#fff48a;color:#0a0b0b}
+  .btn-ghost{background:transparent;border:1.5px solid #4a4e49;color:#eef0ec;font-size:15px;font-weight:800;padding:15px 22px;cursor:pointer;min-height:50px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+  .btn-ghost:hover{border-color:#fce300;color:#fce300}
+  .field{width:100%;background:#0a0b0b;border:1px solid #2d302c;color:#f4f4f1;padding:14px;font-size:16px;font-family:inherit}
+  .field:focus{border-color:#fce300;outline:none}
+  .label{display:block;font-size:10.5px;font-weight:900;letter-spacing:0.16em;color:#83887f;margin-bottom:7px}
+  .linkbtn{background:none;border:none;color:#fce300;font-size:13.5px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline}
+  .chip{background:#0a0b0b;border:1px solid #2d302c;color:#d4d7d2;padding:10px 14px;font-size:13.5px;font-weight:800;cursor:pointer;white-space:nowrap;min-width:78px;text-align:center;line-height:1.35}
+  .chip:hover:not([disabled]){border-color:#fce300}
+  .chip[aria-pressed="true"]{background:#fce300;color:#0a0b0b;border-color:#fce300}
+  .chip[disabled]{opacity:.38;cursor:default}
+  .slot{background:#0a0b0b;border:1px solid #2d302c;color:#f4f4f1;padding:13px 10px;font-size:14px;font-weight:800;cursor:pointer}
+  .slot:hover{border-color:#fce300;color:#fce300}
+  .note{font-size:13.5px;color:#9ba09a;line-height:1.55}
+  .err{color:#e2725b}
+  .row{display:flex;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;padding:13px 0;border-bottom:1px solid #1c1f1c;font-size:14.5px;align-items:center}
+
+  /* The reserve panel. Logged out it sits beside the photo; logged in the
+     photo goes away and the booker takes the page. Padding lives here, not
+     inline, so the mobile rules below cannot strip the side gutters. */
+  #al308-panel{padding:48px 48px 44px 24px;max-width:820px;margin-left:auto;width:100%;min-width:0}
+  body.is-member #al308-hero{display:none}
+  body.is-member #reserve{grid-template-columns:1fr}
+  body.is-member #al308-panel{max-width:860px;margin:0 auto;padding:36px 24px 52px}
+  .slotgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+
   @media (max-width:940px){
+    #al308-panel{padding:40px 20px 44px !important;max-width:none;margin-left:0}
+    body.is-member #al308-panel{padding:28px 20px 44px !important}
     [data-stack]{grid-template-columns:1fr !important}
     [data-hero]{grid-template-columns:1fr !important}
     [data-stack-2]{grid-template-columns:1fr 1fr !important}
     [data-cell]{border-left:0 !important;border-right:0 !important;padding-left:0 !important;padding-right:0 !important}
-    [data-herotext]{max-width:none !important;margin-left:0 !important;padding:56px 24px 48px !important}
-    [data-heromedia]{min-height:300px !important;border-left:0 !important}
-    /* Nav used to be hidden below 940px, which left phones with no way to
-       reach any section. It now wraps to its own row instead. */
+    [data-heromedia]{min-height:240px !important;border-left:0 !important;order:-1}
     [data-navbar]{flex-wrap:wrap !important;gap:10px !important}
     [data-navlinks]{order:3;width:100%;margin-left:0 !important;justify-content:space-between;border-top:1px solid #242724;padding-top:2px}
   }
@@ -44,49 +76,135 @@
     [data-stack-2]{grid-template-columns:1fr !important}
     [data-navlinks] a{font-size:12.5px !important;padding:9px 6px !important}
   }
-
-  a[href]:hover{filter:brightness(1.12)}
-  a[href^="#"], a[href^="http"], a[href^="tel"], a[href^="mailto"], a[href^="sms"]{transition:filter .12s ease, border-color .12s ease}
 </style>
 </head>
 <body>
-<header style="position:sticky;top:0;z-index:40;background:rgba(10,11,11,.95);border-bottom:1px solid #242724">
-  <div data-navbar style="max-width:1280px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:20px">
+<header style="position:sticky;top:0;z-index:40;background:rgba(10,11,11,.96);border-bottom:1px solid #242724">
+  <div data-navbar class="wrap" style="padding:12px 24px;display:flex;align-items:center;gap:20px">
     <a href="#top" style="display:flex;align-items:center;gap:11px;text-decoration:none">
       <img src="uploads/AL308%20Logo.webp" alt="Augusta Local 308" style="height:34px;width:auto">
       <span style="color:#f4f4f1;font-size:13px;font-weight:900;letter-spacing:0.14em;white-space:nowrap">AUGUSTA LOCAL 308</span>
     </a>
     <nav data-navlinks style="margin-left:auto;display:flex;align-items:center;gap:2px">
-      <a href="#swag" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">Swag</a>
       <a href="#membership" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">Membership</a>
       <a href="#league" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">League</a>
       <a href="#room" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">Room</a>
+      <a href="#swag" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">Swag</a>
     </nav>
-    <a href="#reserve" style="margin-left:auto;background:#fce300;color:#0a0b0b;font-size:13px;font-weight:900;padding:14px 20px;text-decoration:none;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;letter-spacing:0.03em">RESERVE</a>
+    <a href="#reserve" id="al308-cta" style="margin-left:auto;background:#fce300;color:#0a0b0b;font-size:13px;font-weight:900;padding:14px 20px;text-decoration:none;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;letter-spacing:0.03em">LOG IN &amp; RESERVE</a>
   </div>
 </header>
 
-<section id="top" data-hero style="display:grid;grid-template-columns:1.02fr 1fr;border-bottom:1px solid #242724">
-  <div data-cell data-herotext style="padding:84px 56px 76px 24px;max-width:784px;margin-left:auto;width:100%">
-    <div style="color:#fce300;font-size:11px;font-weight:900;letter-spacing:0.22em;margin-bottom:22px">MEMBERS ONLY · FRANKLIN, NEBRASKA</div>
-    <h1 style="font-size:clamp(42px,5.8vw,78px);line-height:0.94;letter-spacing:-0.035em;font-weight:900;margin:0 0 22px">Golf every day<br>of the year.</h1>
-    <p style="font-size:19px;line-height:1.5;color:#b4b8b3;max-width:34ch;margin:0 0 34px">Uneekor simulator, 4K projector, fifteen foot screen. Unlimited for members.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:12px">
-      <a href="#reserve" style="background:#fce300;color:#0a0b0b;font-size:16px;font-weight:900;padding:19px 28px;text-decoration:none;min-height:56px;display:inline-flex;align-items:center;gap:10px">
-        Reserve a time
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-      </a>
-      <a href="#membership" style="border:1.5px solid #4a4e49;color:#eef0ec;font-size:16px;font-weight:800;padding:19px 28px;text-decoration:none;min-height:56px;display:inline-flex;align-items:center">Become a member</a>
+<!-- ==========================================================================
+     RESERVE. First thing on the page on purpose: with twenty members, almost
+     every visit is someone booking the bay, not someone reading about it.
+     ========================================================================== -->
+<section id="top">
+  <div id="reserve" data-hero style="display:grid;grid-template-columns:1.05fr 1fr;border-bottom:1px solid #242724">
+
+    <div id="al308-panel">
+
+      <!-- Logged out --------------------------------------------------------->
+      <div id="al308-gate">
+        <div class="eyebrow" style="margin-bottom:16px">MEMBERS ONLY · FRANKLIN, NEBRASKA</div>
+        <h1 style="font-size:clamp(32px,4.2vw,52px);line-height:0.98;letter-spacing:-0.035em;font-weight:900;margin:0 0 10px">Log in and<br>reserve a time.</h1>
+        <p class="note" style="font-size:16px;max-width:38ch;margin:0 0 26px">Uneekor simulator, 4K projector, fifteen foot screen. Unlimited for members.</p>
+
+        <form id="al308-pw-form" class="panel" style="padding:22px;max-width:440px">
+          <div style="display:grid;gap:14px">
+            <div>
+              <label class="label" for="al308-email">EMAIL</label>
+              <input id="al308-email" class="field" type="email" autocomplete="username" required placeholder="you@email.com">
+            </div>
+            <div>
+              <label class="label" for="al308-password">PASSWORD</label>
+              <input id="al308-password" class="field" type="password" autocomplete="current-password" required placeholder="Your password">
+            </div>
+            <button type="submit" class="btn" style="width:100%">Log in</button>
+          </div>
+          <div id="al308-gate-msg" class="note" style="margin-top:14px"></div>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid #242724">
+            <button type="button" class="linkbtn" id="al308-show-link">First time, or forgot your password? Email me a link</button>
+          </div>
+        </form>
+
+        <form id="al308-link-form" class="panel" style="padding:22px;max-width:440px;margin-top:14px;display:none">
+          <div class="note" style="margin-bottom:14px">Enter the email on your membership. We send a one time link, and you set a password from there.</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <input id="al308-link-email" class="field" type="email" required placeholder="you@email.com" style="flex:1;min-width:180px">
+            <button type="submit" class="btn">Send link</button>
+          </div>
+          <div id="al308-link-msg" class="note" style="margin-top:14px"></div>
+        </form>
+
+        <div class="note" style="margin-top:22px">
+          Not a member yet? <a href="#membership" style="font-weight:700">See membership</a> · Or text JD: <a href="sms:+14022157000" style="font-weight:700;text-decoration:none">402-215-7000</a>
+        </div>
+      </div>
+
+      <!-- Logged in ---------------------------------------------------------->
+      <div id="al308-member" style="display:none">
+
+        <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+          <div>
+            <div class="eyebrow">RESERVE THE BAY</div>
+            <div style="font-size:15px;color:#cdd0cb;margin-top:8px">
+              Booking as <strong id="al308-name" style="color:#f4f4f1"></strong>
+              <button type="button" class="linkbtn" id="al308-edit-name" style="margin-left:8px;font-size:12.5px">change</button>
+            </div>
+          </div>
+          <div style="font-size:12.5px;display:flex;gap:14px;align-items:center">
+            <a href="/admin.html" id="al308-admin-link" style="display:none;color:#fce300;font-weight:800;text-decoration:none">Dashboard</a>
+            <button type="button" class="linkbtn" id="al308-change-pw" style="color:#9ba09a">Password</button>
+            <a href="/.netlify/functions/logout" style="color:#9ba09a;text-decoration:underline">Log out</a>
+          </div>
+        </div>
+
+        <div id="al308-setpw-banner" style="display:none;border:1px solid #fce300;background:rgba(252,227,0,.07);padding:18px;margin-bottom:20px">
+          <div style="font-size:15px;font-weight:800;margin-bottom:6px">Set a password</div>
+          <div class="note" style="margin-bottom:14px">Do this once and you will not need an email link again.</div>
+          <form id="al308-setpw-form" style="display:flex;gap:10px;flex-wrap:wrap">
+            <input id="al308-newpw" class="field" type="password" autocomplete="new-password" placeholder="At least 8 characters" style="flex:1;min-width:200px">
+            <button type="submit" class="btn">Save password</button>
+          </form>
+          <div id="al308-setpw-msg" class="note" style="margin-top:12px"></div>
+        </div>
+
+        <div id="al308-yours" style="margin-bottom:24px"></div>
+
+        <div class="panel" style="margin-bottom:20px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid #242724">
+            <div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#fce300">PICK A DAY</div>
+            <div style="font-size:12.5px;color:#5f635d" id="al308-tz"></div>
+          </div>
+          <div style="padding:16px 18px">
+            <div id="al308-days" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px"></div>
+            <div id="al308-times" style="margin-top:14px"></div>
+            <div id="al308-book-msg" class="note" style="margin-top:12px"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid #242724">
+            <div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#fce300">WHO'S ON THE SIM</div>
+            <div style="font-size:12.5px;color:#5f635d">Next three weeks. Members only.</div>
+          </div>
+          <div id="al308-schedule" style="padding:6px 18px 16px"></div>
+        </div>
+
+        <div class="note" style="margin-top:20px">Something off? Text JD: <a href="sms:+14022157000" style="font-weight:700;text-decoration:none">402-215-7000</a></div>
+      </div>
     </div>
-  </div>
-  <div data-heromedia style="position:relative;border-left:1px solid #242724;min-height:500px">
-    <img src="uploads/Screenshot%202026-07-28%20at%207.20.40%20PM.webp" alt="Augusta Local 308 lit up at night" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
-    <div style="position:absolute;inset:0;background:linear-gradient(90deg,#0a0b0b 0%,rgba(10,11,11,.3) 42%,rgba(10,11,11,0) 100%)"></div>
+
+    <div data-heromedia id="al308-hero" style="position:relative;border-left:1px solid #242724;min-height:520px">
+      <img src="uploads/Screenshot%202026-07-28%20at%207.20.40%20PM.webp" alt="Augusta Local 308 lit up at night" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,#0a0b0b 0%,rgba(10,11,11,.3) 42%,rgba(10,11,11,0) 100%)"></div>
+    </div>
   </div>
 </section>
 
 <section style="border-bottom:1px solid #242724;background:#131514">
-  <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr)" data-stack-2>
+  <div class="wrap" style="display:grid;grid-template-columns:repeat(4,1fr)" data-stack-2>
     <div style="padding:24px 20px 24px 0">
       <div style="font-size:24px;font-weight:900;letter-spacing:-0.02em">Uneekor</div>
       <div style="font-size:10.5px;font-weight:800;letter-spacing:0.16em;color:#83887f;margin-top:6px">LAUNCH MONITOR</div>
@@ -100,61 +218,16 @@
       <div style="font-size:10.5px;font-weight:800;letter-spacing:0.16em;color:#83887f;margin-top:6px">SCREEN</div>
     </div>
     <div style="padding:24px 0 24px 20px;border-left:1px solid #242724">
-      <div style="font-size:24px;font-weight:900;letter-spacing:-0.02em">2 × 75"</div>
+      <div style="font-size:24px;font-weight:900;letter-spacing:-0.02em">2 &times; 75"</div>
       <div style="font-size:10.5px;font-weight:800;letter-spacing:0.16em;color:#83887f;margin-top:6px">TVS</div>
     </div>
   </div>
 </section>
 
-<section id="swag" style="border-bottom:1px solid #242724">
-  <div style="max-width:1280px;margin:0 auto;padding:56px 24px">
-    <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:26px">
-      <h2 style="font-size:clamp(28px,3vw,40px);font-weight:900;letter-spacing:-0.03em;margin:0">308 Swag</h2>
-      <span style="font-size:14.5px;color:#83887f">Pre-order. To the printer 8/31.</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px" data-stack-2>
-      <div style="border:1px solid #2d302c;background:#101211;display:flex;flex-direction:column">
-        <div style="height:220px;background:#191b19;border-bottom:1px solid #242724">
-          <img src="uploads/Hoodie.webp" alt="Augusta Local 308 hoodie, front and back" loading="lazy" style="width:100%;height:220px;object-fit:cover">
-        </div>
-        <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
-          <div>
-            <div style="font-size:16.5px;font-weight:900">Hoodie, black</div>
-            <div style="font-size:11.5px;font-weight:700;letter-spacing:0.1em;color:#83887f;margin-top:4px">LOW STOCK</div>
-          </div>
-          <div style="white-space:nowrap"><span style="color:#83887f;text-decoration:line-through;font-size:13.5px">$50</span> <span style="font-weight:900;font-size:18px;color:#fce300">$45</span></div>
-        </div>
-        <a href="https://buy.stripe.com/dRm4gy8pK1MH9Vp2aY4wM04" target="_blank" rel="noopener" style="margin:0 18px 18px;border:1.5px solid #4a4e49;color:#eef0ec;font-size:14px;font-weight:800;padding:13px 16px;text-decoration:none;min-height:46px;display:flex;align-items:center;justify-content:space-between">Pre-order<span>→</span></a>
-      </div>
-      <div style="border:1px solid #2d302c;background:#101211;display:flex;flex-direction:column">
-        <div style="height:220px;background:#191b19;border-bottom:1px solid #242724">
-          <img src="uploads/TShirt.webp" alt="Augusta Local 308 t-shirt, front and back" loading="lazy" style="width:100%;height:220px;object-fit:cover">
-        </div>
-        <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
-          <div>
-            <div style="font-size:16.5px;font-weight:900">T-shirt</div>
-            <div style="font-size:11.5px;font-weight:700;letter-spacing:0.1em;color:#83887f;margin-top:4px">PRE-ORDER</div>
-          </div>
-          <div style="font-weight:900;font-size:18px">$22</div>
-        </div>
-        <a href="https://buy.stripe.com/aFa8wO8pKdvp2sXaHu4wM05" target="_blank" rel="noopener" style="margin:0 18px 18px;border:1.5px solid #4a4e49;color:#eef0ec;font-size:14px;font-weight:800;padding:13px 16px;text-decoration:none;min-height:46px;display:flex;align-items:center;justify-content:space-between">Pre-order<span>→</span></a>
-      </div>
-      <div style="border:1px solid #2d302c;background:#101211;padding:22px;display:flex;flex-direction:column;justify-content:space-between">
-        <div>
-          <div style="color:#fce300;font-size:11px;font-weight:900;letter-spacing:0.18em;margin-bottom:12px">GIFT IT</div>
-          <div style="font-size:21px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-bottom:10px">Give a year of golf.</div>
-          <p style="font-size:14.5px;line-height:1.55;color:#9ba09a;margin:0">A membership in someone else's name. Best gift in the 308.</p>
-        </div>
-        <a href="https://buy.stripe.com/8x2aEW9tO9f9ffJeXK4wM06" target="_blank" rel="noopener" style="margin-top:22px;background:#fce300;color:#0a0b0b;font-size:14px;font-weight:900;padding:13px 16px;text-decoration:none;min-height:46px;display:flex;align-items:center;justify-content:space-between">Gift a membership<span>→</span></a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="membership" style="border-bottom:1px solid #242724;background:#131514">
-  <div style="max-width:1280px;margin:0 auto;padding:56px 24px">
+  <div class="wrap" style="padding:56px 24px">
     <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:28px">
-      <h2 style="font-size:clamp(28px,3.2vw,42px);font-weight:900;letter-spacing:-0.03em;margin:0">Membership</h2>
+      <h2 class="h2">Membership</h2>
       <span style="font-size:14.5px;color:#83887f">One rate. Unlimited play.</span>
     </div>
 
@@ -174,8 +247,8 @@
             <div style="font-size:34px;font-weight:900;letter-spacing:-0.03em;line-height:1">$550</div>
           </div>
           <div style="margin-top:22px;display:flex;gap:10px">
-            <a href="https://buy.stripe.com/dRm3cudK49f9aZt8zm4wM00" target="_blank" rel="noopener" style="flex:1;background:#fce300;color:#0a0b0b;font-size:14px;font-weight:900;padding:16px 14px;text-decoration:none;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center">Family, $850/yr</a>
-            <a href="https://buy.stripe.com/4gMfZg21m2QL2sXdTG4wM01" target="_blank" rel="noopener" style="flex:1;background:#fce300;color:#0a0b0b;font-size:14px;font-weight:900;padding:16px 14px;text-decoration:none;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center">Single, $550/yr</a>
+            <a href="https://buy.stripe.com/dRm3cudK49f9aZt8zm4wM00" target="_blank" rel="noopener" class="btn" style="flex:1;font-size:14px;padding:16px 14px;text-align:center">Family, $850/yr</a>
+            <a href="https://buy.stripe.com/4gMfZg21m2QL2sXdTG4wM01" target="_blank" rel="noopener" class="btn" style="flex:1;font-size:14px;padding:16px 14px;text-align:center">Single, $550/yr</a>
           </div>
         </div>
       </div>
@@ -194,207 +267,28 @@
             <div style="font-size:34px;font-weight:900;letter-spacing:-0.03em;line-height:1">$50</div>
           </div>
           <div style="margin-top:22px;display:flex;gap:10px">
-            <a href="https://buy.stripe.com/eVq6oG21m1MHaZt4j64wM02" target="_blank" rel="noopener" style="flex:1;border:1.5px solid #4a4e49;color:#eef0ec;font-size:14px;font-weight:900;padding:16px 14px;text-decoration:none;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center">Family, $75/mo</a>
-            <a href="https://buy.stripe.com/5kQ9ASfSc3UP4B54j64wM03" target="_blank" rel="noopener" style="flex:1;border:1.5px solid #4a4e49;color:#eef0ec;font-size:14px;font-weight:900;padding:16px 14px;text-decoration:none;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center">Single, $50/mo</a>
+            <a href="https://buy.stripe.com/eVq6oG21m1MHaZt4j64wM02" target="_blank" rel="noopener" class="btn-ghost" style="flex:1;font-size:14px;padding:16px 14px;text-align:center">Family, $75/mo</a>
+            <a href="https://buy.stripe.com/5kQ9ASfSc3UP4B54j64wM03" target="_blank" rel="noopener" class="btn-ghost" style="flex:1;font-size:14px;padding:16px 14px;text-align:center">Single, $50/mo</a>
           </div>
         </div>
       </div>
     </div>
 
     <div style="border:1px solid #2d302c;padding:18px 22px;display:flex;flex-wrap:wrap;align-items:baseline;gap:14px">
-      <span style="font-size:11px;font-weight:900;letter-spacing:0.16em;color:#fce300">GUESTS</span>
+      <span class="eyebrow">GUESTS</span>
       <span style="font-size:15.5px;color:#cdd0cb">$20 per person, and always with a member.</span>
     </div>
   </div>
 </section>
 
-<section id="reserve" style="border-bottom:1px solid #242724">
-  <div style="max-width:1280px;margin:0 auto;padding:56px 24px">
-    <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:24px">
-      <h2 style="font-size:clamp(28px,3.2vw,42px);font-weight:900;letter-spacing:-0.03em;margin:0">Reserve</h2>
-      <span style="font-size:14.5px;color:#83887f">Members only. Log in to book.</span>
-    </div>
-
-    <div id="al308-login-gate" style="border:1px solid #2d302c;background:#101211;padding:32px;max-width:420px">
-      <div style="font-size:15px;color:#cdd0cb;margin-bottom:16px">Enter the email on your membership. We'll send you a login link.</div>
-      <form id="al308-login-form" style="display:flex;gap:10px;flex-wrap:wrap">
-        <input id="al308-login-email" type="email" required placeholder="you@email.com" style="flex:1;min-width:180px;background:#0a0b0b;border:1px solid #2d302c;color:#f4f4f1;padding:13px 14px;font-size:14.5px">
-        <button type="submit" style="background:#fce300;color:#0a0b0b;font-size:14px;font-weight:900;padding:13px 20px;border:none;cursor:pointer;min-height:46px">Send link</button>
-      </form>
-      <div id="al308-login-msg" style="margin-top:14px;font-size:13.5px;color:#9ba09a"></div>
-    </div>
-
-    <div id="al308-member-view" style="display:none">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:18px">
-        <div style="font-size:13.5px;color:#9ba09a">Logged in as <span id="al308-member-email" style="color:#eef0ec;font-weight:700"></span></div>
-        <a href="/.netlify/functions/logout" style="font-size:13px;color:#9ba09a;text-decoration:underline">Log out</a>
-      </div>
-      <div id="al308-bookings" style="margin-bottom:22px"></div>
-
-      <div style="border:1px solid #2d302c;background:#101211;margin-bottom:18px">
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid #242724">
-          <div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#fce300">WHO'S ON THE SIM</div>
-          <div style="font-size:12.5px;color:#5f635d">Next three weeks. Members only.</div>
-        </div>
-        <div id="al308-schedule" style="padding:6px 18px 16px"></div>
-      </div>
-
-      <div style="border:1px solid #2d302c;background:#101211;padding:16px">
-        <div style="width:100%;height:680px;overflow:scroll" id="my-cal-inline-bookbay"></div>
-      </div>
-    </div>
-
-    <div style="margin-top:20px;font-size:14px;color:#83887f">Or text JD directly: <a href="sms:+14022157000" style="color:#fce300;text-decoration:none;font-weight:700">402-215-7000</a></div>
-  </div>
-</section>
-
-<script>
-(function(){
-  var gate = document.getElementById('al308-login-gate');
-  var memberView = document.getElementById('al308-member-view');
-  var form = document.getElementById('al308-login-form');
-  var msg = document.getElementById('al308-login-msg');
-  var emailInput = document.getElementById('al308-login-email');
-  var bookingsEl = document.getElementById('al308-bookings');
-  var emailLabel = document.getElementById('al308-member-email');
-
-  function fmt(dt) {
-    try { return new Date(dt).toLocaleString('en-US', {weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}); }
-    catch(e){ return dt; }
-  }
-
-  function renderBookings(data) {
-    var html = '';
-    if (data.upcoming && data.upcoming.length) {
-      html += '<div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#83887f;margin-bottom:8px">UPCOMING</div>';
-      data.upcoming.forEach(function(b){ html += '<div style="padding:12px 0;border-bottom:1px solid #242724;font-size:14.5px">'+fmt(b.start)+'</div>'; });
-    }
-    if (data.past && data.past.length) {
-      html += '<div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#83887f;margin:18px 0 8px">PAST</div>';
-      data.past.slice(0,10).forEach(function(b){ html += '<div style="padding:12px 0;border-bottom:1px solid #242724;font-size:14.5px;color:#83887f">'+fmt(b.start)+'</div>'; });
-    }
-    if (!html) html = '<div style="font-size:14px;color:#83887f">No bookings yet.</div>';
-    bookingsEl.innerHTML = html;
-  }
-
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-    });
-  }
-
-  function dayKey(dt) {
-    try { return new Date(dt).toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'}); }
-    catch(e){ return ''; }
-  }
-
-  function timeRange(start, end) {
-    var opts = {hour:'numeric', minute:'2-digit'};
-    try {
-      var s = new Date(start).toLocaleTimeString('en-US', opts);
-      var e = new Date(end).toLocaleTimeString('en-US', opts);
-      return s + ' to ' + e;
-    } catch(err){ return ''; }
-  }
-
-  // Live members calendar. Server decides what this member may see; names come
-  // back already reduced to a first name and last initial, never emails.
-  function loadSchedule() {
-    var el = document.getElementById('al308-schedule');
-    if (!el) return;
-    el.innerHTML = '<div style="font-size:14px;color:#5f635d;padding:12px 0">Loading...</div>';
-
-    fetch('/.netlify/functions/schedule', {credentials:'same-origin'})
-      .then(function(r){ return r.ok ? r.json() : Promise.reject(r); })
-      .then(function(data){
-        var list = data.bookings || [];
-        if (!list.length) {
-          el.innerHTML = '<div style="font-size:14.5px;color:#83887f;padding:12px 0">Nothing booked yet. The place is yours.</div>';
-          return;
-        }
-        var html = '';
-        var lastDay = null;
-        list.forEach(function(b){
-          var d = dayKey(b.start);
-          if (d !== lastDay) {
-            lastDay = d;
-            html += '<div style="font-size:11px;font-weight:900;letter-spacing:0.14em;color:#5f635d;margin:16px 0 4px">' + esc(d).toUpperCase() + '</div>';
-          }
-          html += '<div style="display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid #1c1f1c;font-size:14.5px">' +
-                    '<span style="color:' + (b.mine ? '#fce300' : '#d4d7d2') + ';font-weight:' + (b.mine ? '900' : '700') + '">' + esc(b.who) + (b.mine ? ' (you)' : '') + '</span>' +
-                    '<span style="color:#83887f;white-space:nowrap">' + esc(timeRange(b.start, b.end)) + '</span>' +
-                  '</div>';
-        });
-        el.innerHTML = html;
-      })
-      .catch(function(){
-        el.innerHTML = '<div style="font-size:14px;color:#83887f;padding:12px 0">Calendar is unavailable right now.</div>';
-      });
-  }
-
-  function loadCal() {
-    if (window.__al308CalLoaded) return;
-    window.__al308CalLoaded = true;
-    (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-    Cal("init", "bookbay", {origin:"https://app.cal.com"});
-    Cal.config = Cal.config || {};
-    Cal.config.forwardQueryParams = true;
-    Cal.ns.bookbay("inline", {
-      elementOrSelector:"#my-cal-inline-bookbay",
-      config: {"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"dark"},
-      calLink: "al308/bookbay",
-    });
-    Cal.ns.bookbay("ui", {"cssVarsPerTheme":{"light":{"cal-brand":"#fce300"},"dark":{"cal-brand":"#fce300"}},"hideEventTypeDetails":false,"layout":"month_view"});
-  }
-
-  fetch('/.netlify/functions/me', {credentials:'same-origin'})
-    .then(function(r){ return r.ok ? r.json() : Promise.reject(r); })
-    .then(function(data){
-      gate.style.display = 'none';
-      memberView.style.display = 'block';
-      emailLabel.textContent = data.email;
-      renderBookings(data);
-      loadSchedule();
-      loadCal();
-    })
-    .catch(function(){
-      var params = new URLSearchParams(location.search);
-      if (params.get('login') === 'expired') {
-        msg.textContent = "That link expired or wasn't valid. Enter your email again.";
-        msg.style.color = '#e2725b';
-      }
-    });
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    msg.style.color = '#9ba09a';
-    msg.textContent = 'Sending...';
-    fetch('/.netlify/functions/request-login', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({email: emailInput.value})
-    })
-      .then(function(r){ return r.json().then(function(d){ return {ok: r.ok, data: d}; }); })
-      .then(function(res){
-        msg.textContent = res.data.message || 'Check your inbox.';
-        msg.style.color = res.ok ? '#9ba09a' : '#e2725b';
-      })
-      .catch(function(){
-        msg.style.color = '#e2725b';
-        msg.textContent = 'Something went wrong. Text JD instead: 402-215-7000';
-      });
-  });
-})();
-</script>
-
-<section id="league" style="border-bottom:1px solid #242724;background:#131514">
-  <div style="max-width:1280px;margin:0 auto;padding:56px 24px;display:grid;grid-template-columns:1fr 1fr;gap:44px" data-stack>
+<section id="league" style="border-bottom:1px solid #242724">
+  <div class="wrap" style="padding:56px 24px;display:grid;grid-template-columns:1fr 1fr;gap:44px" data-stack>
     <div>
-      <h2 style="font-size:clamp(28px,3vw,40px);font-weight:900;letter-spacing:-0.03em;margin:0 0 14px">League</h2>
+      <h2 class="h2" style="margin-bottom:14px">League</h2>
       <p style="font-size:16.5px;line-height:1.55;color:#b4b8b3;max-width:36ch;margin:0 0 24px">Handicapped, played on your own schedule. Standings post when the last card is in.</p>
       <!-- STANDINGS: publish the Google Sheet (File > Share > Publish to web),
            then replace this whole <span> block with:
-           <a href="PASTE_PUBLISHED_SHEET_URL" target="_blank" rel="noopener" style="background:#fce300;color:#0a0b0b;font-size:15px;font-weight:900;padding:17px 24px;text-decoration:none;min-height:52px;display:inline-flex;align-items:center;gap:10px">See current standings</a>
+           <a href="PASTE_PUBLISHED_SHEET_URL" target="_blank" rel="noopener" class="btn">See current standings</a>
            Until then this stays a label, not a link to nowhere. -->
       <span style="border:1.5px solid #2d302c;color:#83887f;font-size:15px;font-weight:800;padding:17px 24px;min-height:52px;display:inline-flex;align-items:center">
         Standings post after the first week
@@ -411,10 +305,10 @@
   </div>
 </section>
 
-<section id="room" style="border-bottom:1px solid #242724">
-  <div style="max-width:1280px;margin:0 auto;padding:56px 24px;display:grid;grid-template-columns:1fr 1.25fr;gap:44px;align-items:start" data-stack>
+<section id="room" style="border-bottom:1px solid #242724;background:#131514">
+  <div class="wrap" style="padding:56px 24px;display:grid;grid-template-columns:1fr 1.25fr;gap:44px;align-items:start" data-stack>
     <div>
-      <h2 style="font-size:clamp(28px,3vw,40px);font-weight:900;letter-spacing:-0.03em;margin:0 0 14px">The room</h2>
+      <h2 class="h2" style="margin-bottom:14px">The room</h2>
       <p style="font-size:16.5px;line-height:1.55;color:#b4b8b3;max-width:34ch;margin:0 0 24px">Blacked out, real turf, screen wall to wall. Two 75 inch TVs so the group that is not swinging still has the game on.</p>
       <div style="border-top:1px solid #242724">
         <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #242724;font-size:14.5px"><span style="font-weight:800">Simulator</span><span style="color:#9ba09a">Uneekor, 4K</span></div>
@@ -429,8 +323,54 @@
   </div>
 </section>
 
+<section id="swag" style="border-bottom:1px solid #242724">
+  <div class="wrap" style="padding:56px 24px">
+    <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:26px">
+      <h2 class="h2">308 Swag</h2>
+      <!-- TODO JD: this date is in the past. Update it or delete this span. -->
+      <span style="font-size:14.5px;color:#83887f">Pre-order.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px" data-stack-2>
+      <div class="panel" style="display:flex;flex-direction:column">
+        <div style="height:220px;background:#191b19;border-bottom:1px solid #242724">
+          <img src="uploads/Hoodie.webp" alt="Augusta Local 308 hoodie, front and back" loading="lazy" style="width:100%;height:220px;object-fit:cover">
+        </div>
+        <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+          <div>
+            <div style="font-size:16.5px;font-weight:900">Hoodie, black</div>
+            <div style="font-size:11.5px;font-weight:700;letter-spacing:0.1em;color:#83887f;margin-top:4px">LOW STOCK</div>
+          </div>
+          <div style="white-space:nowrap"><span style="color:#83887f;text-decoration:line-through;font-size:13.5px">$50</span> <span style="font-weight:900;font-size:18px;color:#fce300">$45</span></div>
+        </div>
+        <a href="https://buy.stripe.com/dRm4gy8pK1MH9Vp2aY4wM04" target="_blank" rel="noopener" class="btn-ghost" style="margin:0 18px 18px;font-size:14px;padding:13px 16px;justify-content:space-between">Pre-order<span>&rarr;</span></a>
+      </div>
+      <div class="panel" style="display:flex;flex-direction:column">
+        <div style="height:220px;background:#191b19;border-bottom:1px solid #242724">
+          <img src="uploads/TShirt.webp" alt="Augusta Local 308 t-shirt, front and back" loading="lazy" style="width:100%;height:220px;object-fit:cover">
+        </div>
+        <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+          <div>
+            <div style="font-size:16.5px;font-weight:900">T-shirt</div>
+            <div style="font-size:11.5px;font-weight:700;letter-spacing:0.1em;color:#83887f;margin-top:4px">PRE-ORDER</div>
+          </div>
+          <div style="font-weight:900;font-size:18px">$22</div>
+        </div>
+        <a href="https://buy.stripe.com/aFa8wO8pKdvp2sXaHu4wM05" target="_blank" rel="noopener" class="btn-ghost" style="margin:0 18px 18px;font-size:14px;padding:13px 16px;justify-content:space-between">Pre-order<span>&rarr;</span></a>
+      </div>
+      <div class="panel" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+          <div class="eyebrow" style="margin-bottom:12px">GIFT IT</div>
+          <div style="font-size:21px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-bottom:10px">Give a year of golf.</div>
+          <p style="font-size:14.5px;line-height:1.55;color:#9ba09a;margin:0">A membership in someone else's name. Best gift in the 308.</p>
+        </div>
+        <a href="https://buy.stripe.com/8x2aEW9tO9f9ffJeXK4wM06" target="_blank" rel="noopener" class="btn" style="margin-top:22px;font-size:14px;padding:13px 16px;justify-content:space-between">Gift a membership<span>&rarr;</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
-  <div style="max-width:1280px;margin:0 auto;padding:38px 24px;display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:32px" data-stack>
+  <div class="wrap" style="padding:38px 24px;display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:32px" data-stack>
     <div style="display:flex;align-items:center;gap:14px">
       <img src="uploads/AL308%20Logo.webp" alt="" loading="lazy" style="height:44px;width:auto">
       <div style="font-size:12.5px;color:#83887f;line-height:1.6">
@@ -455,5 +395,330 @@
     </div>
   </div>
 </footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var TZ = 'America/Chicago';
+  try { TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || TZ; } catch (e) {}
+
+  var state = { me: null, days: [], slots: {}, selectedDay: null };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function post(url, body) {
+    return fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {})
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) {
+        return { ok: r.ok, status: r.status, data: d };
+      });
+    });
+  }
+  function say(el, text, isError) {
+    if (!el) return;
+    el.textContent = text || '';
+    el.className = 'note' + (isError ? ' err' : '');
+  }
+  function dayISO(d) { return d.toLocaleDateString('en-CA'); }
+  function timeOf(iso) {
+    try { return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+    catch (e) { return ''; }
+  }
+  function longDate(iso) {
+    try { return new Date(iso).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }); }
+    catch (e) { return ''; }
+  }
+  function stamp(iso) {
+    try { return new Date(iso).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); }
+    catch (e) { return iso; }
+  }
+
+  // -- Logged out ----------------------------------------------------------
+  $('al308-show-link').addEventListener('click', function () {
+    var f = $('al308-link-form');
+    f.style.display = f.style.display === 'none' ? 'block' : 'none';
+    if (f.style.display === 'block') $('al308-link-email').focus();
+  });
+
+  $('al308-pw-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = $('al308-gate-msg');
+    say(msg, 'Checking...');
+    post('/.netlify/functions/login', {
+      email: $('al308-email').value,
+      password: $('al308-password').value
+    }).then(function (res) {
+      if (res.ok && res.data.ok) { location.href = '/#reserve'; location.reload(); return; }
+      say(msg, res.data.message || 'That did not work.', true);
+    }).catch(function () {
+      say(msg, 'Something went wrong. Text JD: 402-215-7000', true);
+    });
+  });
+
+  $('al308-link-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = $('al308-link-msg');
+    say(msg, 'Sending...');
+    post('/.netlify/functions/request-login', { email: $('al308-link-email').value })
+      .then(function (res) { say(msg, res.data.message || 'Check your inbox.', !res.ok); })
+      .catch(function () { say(msg, 'Something went wrong. Text JD: 402-215-7000', true); });
+  });
+
+  // -- Set password --------------------------------------------------------
+  $('al308-setpw-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = $('al308-setpw-msg');
+    say(msg, 'Saving...');
+    post('/.netlify/functions/set-password', { password: $('al308-newpw').value })
+      .then(function (res) {
+        if (res.ok && res.data.ok) {
+          $('al308-newpw').value = '';
+          say(msg, 'Saved. Next time just use your email and password.');
+          setTimeout(function () { $('al308-setpw-banner').style.display = 'none'; }, 2500);
+          return;
+        }
+        say(msg, res.data.message || 'Could not save that.', true);
+      })
+      .catch(function () { say(msg, 'Could not save that.', true); });
+  });
+
+  $('al308-change-pw').addEventListener('click', function () {
+    var b = $('al308-setpw-banner');
+    b.style.display = 'block';
+    $('al308-newpw').focus();
+  });
+
+  $('al308-edit-name').addEventListener('click', function () {
+    var current = state.me && state.me.name ? state.me.name : '';
+    var next = window.prompt('Name to show on the calendar', current);
+    if (next === null) return;
+    next = next.trim();
+    if (next.length < 2) return;
+    post('/.netlify/functions/profile', { name: next }).then(function (res) {
+      if (res.ok && res.data.ok) {
+        state.me.name = res.data.name;
+        $('al308-name').textContent = res.data.name;
+        loadSchedule();
+      }
+    });
+  });
+
+  // -- Your bookings -------------------------------------------------------
+  function renderYours() {
+    var el = $('al308-yours');
+    var up = (state.me && state.me.upcoming) || [];
+    if (!up.length) {
+      el.innerHTML = '<div class="note">Nothing booked yet. Pick a day below.</div>';
+      return;
+    }
+    var html = '<div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#83887f;margin-bottom:6px">YOUR TIMES</div>';
+    up.forEach(function (b) {
+      html += '<div class="row">' +
+        '<span style="font-weight:700">' + esc(stamp(b.start)) +
+        (b.status === 'pending' ? ' <span style="color:#83887f;font-weight:600">(waiting on JD)</span>' : '') +
+        '</span>' +
+        '<button type="button" class="linkbtn" data-cancel="' + esc(b.uid) + '" style="color:#9ba09a">Cancel</button>' +
+        '</div>';
+    });
+    el.innerHTML = html;
+
+    Array.prototype.forEach.call(el.querySelectorAll('[data-cancel]'), function (btn) {
+      btn.addEventListener('click', function () {
+        if (!window.confirm('Cancel this reservation?')) return;
+        btn.disabled = true;
+        btn.textContent = 'Cancelling...';
+        post('/.netlify/functions/cancel', { uid: btn.getAttribute('data-cancel') })
+          .then(function (res) {
+            if (res.ok && res.data.ok) { refreshMe(); loadSlots(); loadSchedule(); }
+            else { btn.disabled = false; btn.textContent = 'Cancel'; say($('al308-book-msg'), res.data.message || 'Could not cancel.', true); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = 'Cancel'; });
+      });
+    });
+  }
+
+  // -- Day strip and times -------------------------------------------------
+  function buildDays() {
+    var out = [];
+    var today = new Date();
+    for (var i = 0; i < 14; i++) {
+      var d = new Date(today.getTime() + i * 86400000);
+      out.push({
+        key: dayISO(d),
+        label: i === 0 ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' }),
+        sub: d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })
+      });
+    }
+    return out;
+  }
+
+  function renderDays() {
+    var el = $('al308-days');
+    var html = '';
+    state.days.forEach(function (d) {
+      var open = (state.slots[d.key] || []).length;
+      html += '<button type="button" class="chip" data-day="' + d.key + '"' +
+        (open ? '' : ' disabled') +
+        ' aria-pressed="' + (state.selectedDay === d.key ? 'true' : 'false') + '">' +
+        esc(d.label) + '<br><span style="font-weight:600;font-size:11.5px">' +
+        (open ? esc(d.sub) : 'full') + '</span></button>';
+    });
+    el.innerHTML = html;
+    Array.prototype.forEach.call(el.querySelectorAll('[data-day]'), function (btn) {
+      btn.addEventListener('click', function () {
+        state.selectedDay = btn.getAttribute('data-day');
+        renderDays();
+        renderTimes();
+      });
+    });
+  }
+
+  function renderTimes() {
+    var el = $('al308-times');
+    if (!state.selectedDay) {
+      var any = Object.keys(state.slots).length;
+      el.innerHTML = '<div class="note">' + (any ? 'Pick a day to see open times.' : 'No open times in the next two weeks. Text JD: 402-215-7000') + '</div>';
+      return;
+    }
+    var list = state.slots[state.selectedDay] || [];
+    if (!list.length) { el.innerHTML = '<div class="note">Nothing open that day.</div>'; return; }
+
+    var html = '<div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#83887f;margin-bottom:10px">' +
+      esc(longDate(list[0].start)).toUpperCase() + '</div>' +
+      '<div class="slotgrid">';
+    list.forEach(function (s) {
+      var label = timeOf(s.start) + (s.end ? ' to ' + timeOf(s.end) : '');
+      html += '<button type="button" class="slot" data-start="' + esc(s.start) + '">' + esc(label) + '</button>';
+    });
+    html += '</div>';
+    el.innerHTML = html;
+
+    Array.prototype.forEach.call(el.querySelectorAll('[data-start]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var start = btn.getAttribute('data-start');
+        if (!window.confirm('Book ' + stamp(start) + '?')) return;
+        Array.prototype.forEach.call(el.querySelectorAll('[data-start]'), function (b) { b.disabled = true; });
+        btn.textContent = 'Booking...';
+        say($('al308-book-msg'), '');
+        post('/.netlify/functions/book', { start: start, timeZone: TZ })
+          .then(function (res) {
+            if (res.ok && res.data.ok) {
+              say($('al308-book-msg'), res.data.message || 'Booked.');
+              refreshMe();
+              loadSlots();
+              loadSchedule();
+              return;
+            }
+            say($('al308-book-msg'), res.data.message || 'Could not book that.', true);
+            renderTimes();
+          })
+          .catch(function () {
+            say($('al308-book-msg'), 'Could not book that. Text JD: 402-215-7000', true);
+            renderTimes();
+          });
+      });
+    });
+  }
+
+  function loadSlots() {
+    $('al308-times').innerHTML = '<div class="note">Loading open times...</div>';
+    return fetch('/.netlify/functions/slots?days=14&timeZone=' + encodeURIComponent(TZ), { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+      .then(function (data) {
+        state.slots = data.slots || {};
+        state.days = buildDays();
+        if (!state.selectedDay || !(state.slots[state.selectedDay] || []).length) {
+          state.selectedDay = null;
+          for (var i = 0; i < state.days.length; i++) {
+            if ((state.slots[state.days[i].key] || []).length) { state.selectedDay = state.days[i].key; break; }
+          }
+        }
+        renderDays();
+        renderTimes();
+      })
+      .catch(function () {
+        $('al308-days').innerHTML = '';
+        $('al308-times').innerHTML = '<div class="note err">Open times are unavailable right now. Text JD: 402-215-7000</div>';
+      });
+  }
+
+  // -- Shared calendar -----------------------------------------------------
+  function loadSchedule() {
+    var el = $('al308-schedule');
+    el.innerHTML = '<div class="note" style="padding:12px 0">Loading...</div>';
+    return fetch('/.netlify/functions/schedule', { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+      .then(function (data) {
+        var list = data.bookings || [];
+        if (!list.length) {
+          el.innerHTML = '<div class="note" style="padding:12px 0">Nothing booked yet. The place is yours.</div>';
+          return;
+        }
+        var html = '';
+        var lastDay = null;
+        list.forEach(function (b) {
+          var d = longDate(b.start);
+          if (d !== lastDay) {
+            lastDay = d;
+            html += '<div style="font-size:11px;font-weight:900;letter-spacing:0.14em;color:#5f635d;margin:16px 0 4px">' + esc(d).toUpperCase() + '</div>';
+          }
+          html += '<div class="row">' +
+            '<span style="color:' + (b.mine ? '#fce300' : '#d4d7d2') + ';font-weight:' + (b.mine ? '900' : '700') + '">' +
+            esc(b.who) + (b.mine ? ' (you)' : '') + '</span>' +
+            '<span style="color:#83887f;white-space:nowrap">' + esc(timeOf(b.start) + (b.end ? ' to ' + timeOf(b.end) : '')) + '</span>' +
+            '</div>';
+        });
+        el.innerHTML = html;
+      })
+      .catch(function () {
+        el.innerHTML = '<div class="note" style="padding:12px 0">Calendar is unavailable right now.</div>';
+      });
+  }
+
+  // -- Boot ----------------------------------------------------------------
+  function showMember(data) {
+    state.me = data;
+    $('al308-gate').style.display = 'none';
+    $('al308-member').style.display = 'block';
+    // Members get the full width. The photo sells memberships; they already bought.
+    document.body.classList.add('is-member');
+    $('al308-cta').textContent = 'RESERVE';
+    $('al308-name').textContent = data.name || data.email;
+    $('al308-tz').textContent = 'Times shown in ' + TZ.split('/').pop().replace(/_/g, ' ');
+    if (data.admin) $('al308-admin-link').style.display = 'inline';
+    var wantsPw = new URLSearchParams(location.search).get('setpw') === '1';
+    if (!data.hasPassword || wantsPw) $('al308-setpw-banner').style.display = 'block';
+    renderYours();
+    loadSlots();
+    loadSchedule();
+  }
+
+  function refreshMe() {
+    return fetch('/.netlify/functions/me', { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+      .then(function (data) { state.me = data; renderYours(); })
+      .catch(function () {});
+  }
+
+  fetch('/.netlify/functions/me', { credentials: 'same-origin' })
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+    .then(showMember)
+    .catch(function () {
+      var params = new URLSearchParams(location.search);
+      if (params.get('login') === 'expired') {
+        say($('al308-gate-msg'), "That link expired or wasn't valid. Log in, or ask for a new link.", true);
+      }
+    });
+})();
+</script>
 </body>
 </html>

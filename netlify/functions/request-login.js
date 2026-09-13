@@ -71,7 +71,7 @@ exports.handler = async (event) => {
         to: [email],
         subject: 'Your Augusta Local 308 login link',
         html:
-          '<p>Tap below to log in, book the bay, and see who else is playing. This link expires in 15 minutes.</p>' +
+          '<p>Tap below to log in. Once you are in, set a password and you will not need one of these again. This link expires in 15 minutes.</p>' +
           '<p><a href="' + link + '">Log in to Augusta Local 308</a></p>' +
           '<p style="color:#888;font-size:12px">Didn\'t request this? You can ignore this email.</p>',
       }),

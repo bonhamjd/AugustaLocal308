@@ -5,9 +5,13 @@
 [functions]
   node_bundler = "esbuild"
 
-# No Content-Security-Policy on purpose: the page loads the Cal.com embed and
-# Google Fonts, and a wrong CSP breaks booking silently. Revisit only with a
-# deploy preview to test against.
+# /admin is the dashboard. The page itself is public HTML; everything on it
+# comes from a function that returns 404 to anyone who is not an admin.
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -15,6 +19,11 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
     Content-Security-Policy = "frame-ancestors 'none'"
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
   for = "/uploads/*"

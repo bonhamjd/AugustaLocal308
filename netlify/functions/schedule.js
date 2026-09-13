@@ -4,7 +4,7 @@
 // membership means no data, not a hidden div. Never returns email addresses,
 // and last names are reduced to an initial, so the response is not a roster.
 
-const { isMember, calFetch, maskName, json, requireActiveSession } = require('./_shared');
+const { calFetch, maskName, json, requireActiveSession } = require('./_shared');
 
 const DAYS_AHEAD = 21;
 
