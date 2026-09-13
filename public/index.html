@@ -40,6 +40,13 @@
   .btn-ghost{border:1.5px solid #4a4e49;color:#eef0ec;font-size:16px;font-weight:800;padding:19px 28px;text-decoration:none;min-height:56px;display:inline-flex;align-items:center;justify-content:center}
   .btn-ghost:hover{border-color:#fce300;color:#fce300}
 
+  .sizes{margin:0 18px 18px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .sizebtn{border:1.5px solid #4a4e49;background:transparent;color:#eef0ec;font-family:inherit;font-size:14px;font-weight:800;padding:13px 4px;min-height:46px;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center}
+  .sizebtn:hover{border-color:#fce300;color:#fce300}
+  .sizebtn.gone{opacity:.3;cursor:default;border-style:dashed}
+  .sizebtn.gone:hover{border-color:#4a4e49;color:#eef0ec}
+  .sizenote{margin:0 18px 16px;font-size:12.5px;color:#83887f}
+
   @media (max-width:940px){
     [data-stack]{grid-template-columns:1fr !important}
     [data-hero]{grid-template-columns:1fr !important}
@@ -226,11 +233,10 @@
         <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
           <div>
             <div style="font-size:16.5px;font-weight:900">Hoodie, black</div>
-            <div style="font-size:11.5px;font-weight:700;letter-spacing:0.1em;color:#83887f;margin-top:4px">IN STOCK</div>
           </div>
           <div style="white-space:nowrap"><span style="color:#83887f;text-decoration:line-through;font-size:13.5px">$50</span> <span style="font-weight:900;font-size:18px;color:#fce300">$45</span></div>
         </div>
-        <a href="https://buy.stripe.com/dRm4gy8pK1MH9Vp2aY4wM04" target="_blank" rel="noopener" class="btn-ghost" style="margin:0 18px 18px;font-size:14px;padding:13px 16px;justify-content:space-between">Buy<span>&rarr;</span></a>
+        <div class="sizes" data-item="hoodie"></div>
       </div>
       <div class="panel" style="display:flex;flex-direction:column">
         <div style="height:220px;background:#191b19;border-bottom:1px solid #242724">
@@ -239,11 +245,10 @@
         <div style="padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">
           <div>
             <div style="font-size:16.5px;font-weight:900">T-shirt</div>
-            <div style="font-size:11.5px;font-weight:700;letter-spacing:0.1em;color:#83887f;margin-top:4px">IN STOCK</div>
           </div>
           <div style="font-weight:900;font-size:18px">$22</div>
         </div>
-        <a href="https://buy.stripe.com/aFa8wO8pKdvp2sXaHu4wM05" target="_blank" rel="noopener" class="btn-ghost" style="margin:0 18px 18px;font-size:14px;padding:13px 16px;justify-content:space-between">Buy<span>&rarr;</span></a>
+        <div class="sizes" data-item="tshirt"></div>
       </div>
       <div class="panel" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between">
         <div>
@@ -284,5 +289,52 @@
     </div>
   </div>
 </footer>
+
+<script>
+/* =====================================================================
+   SWAG LINKS. Paste the Stripe payment link for each size below.
+
+   One link per size, each one capped at 2 payments in Stripe, so a size
+   stops selling itself the moment both are gone. Nothing here needs
+   touching when that happens.
+
+   To pull a size off the page by hand, blank its link: '' shows Sold out.
+   ===================================================================== */
+var SWAG = {
+  hoodie: {
+    S:  '',
+    M:  '',
+    L:  '',
+    XL: ''
+  },
+  tshirt: {
+    S:  '',
+    M:  '',
+    L:  '',
+    XL: ''
+  }
+};
+/* ================= nothing below here needs editing ================= */
+(function () {
+  var ORDER = ['S', 'M', 'L', 'XL'];
+  Array.prototype.forEach.call(document.querySelectorAll('.sizes'), function (row) {
+    var item = SWAG[row.getAttribute('data-item')] || {};
+    var any = false;
+    row.innerHTML = ORDER.map(function (size) {
+      var url = (item[size] || '').trim();
+      if (url) {
+        any = true;
+        return '<a class="sizebtn" href="' + url + '" target="_blank" rel="noopener" ' +
+               'aria-label="Buy size ' + size + '">' + size + '</a>';
+      }
+      return '<span class="sizebtn gone" title="Sold out">' + size + '</span>';
+    }).join('');
+    var note = document.createElement('div');
+    note.className = 'sizenote';
+    note.textContent = any ? 'Pick a size. Pick up at the bay.' : 'Sold out. Text JD to get on the next order.';
+    row.parentNode.insertBefore(note, row.nextSibling);
+  });
+})();
+</script>
 </body>
 </html>
