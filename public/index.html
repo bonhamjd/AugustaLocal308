@@ -223,7 +223,7 @@
   <div class="wrap" style="padding:56px 24px">
     <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:26px">
       <h2 class="h2">308 Swag</h2>
-      <span style="font-size:14.5px;color:#83887f">In stock.</span>
+      <span id="swagstate" style="font-size:14.5px;color:#83887f">Pick up at the bay.</span>
     </div>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:760px" data-stack-2>
       <div class="panel" style="display:flex;flex-direction:column">
@@ -309,6 +309,7 @@ var SWAG = {
 /* ================= nothing below here needs editing ================= */
 (function () {
   var ORDER = ['S', 'M', 'L', 'XL'];
+  var anywhere = false;
   Array.prototype.forEach.call(document.querySelectorAll('.sizes'), function (row) {
     var item = SWAG[row.getAttribute('data-item')] || {};
     var any = false;
@@ -325,7 +326,12 @@ var SWAG = {
     note.className = 'sizenote';
     note.textContent = any ? 'Pick a size. Pick up at the bay.' : 'Sold out. Text JD to get on the next order.';
     row.parentNode.insertBefore(note, row.nextSibling);
+    if (any) anywhere = true;
   });
+  // The heading used to say "In stock." while every size underneath said
+  // "Sold out." Say one thing, and let the links decide which.
+  var state = document.getElementById('swagstate');
+  if (state) state.textContent = anywhere ? 'In stock. Pick up at the bay.' : 'Text JD to get on the next order.';
 })();
 </script>
 </body>
