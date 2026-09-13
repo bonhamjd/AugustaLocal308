@@ -48,6 +48,7 @@ function resetBookings() {
 resetBookings();
 
 let lastBookingPayload = null;
+let lastSlotsUrl = null;
 
 global.fetch = async (url, opts = {}) => {
   const method = opts.method || 'GET';
@@ -102,6 +103,7 @@ global.fetch = async (url, opts = {}) => {
 
   // ---- Cal.com -------------------------------------------------------------
   if (url.includes('api.cal.com/v2/slots')) {
+    lastSlotsUrl = url;
     return res(200, {
       status: 'success',
       data: {
@@ -358,6 +360,11 @@ const verifyLogin = require('../netlify/functions/verify-login');
     assert.ok(days.length >= 1, 'no days returned');
     assert.ok(d.slots[days[0]][0].start, 'slot has no start');
   });
+  await check('asking for a longer block passes duration to Cal.com', async () => {
+    lastSlotsUrl = null;
+    await slots.handler(sessionEvent('paid@example.com', { queryStringParameters: { duration: '180' } }));
+    assert.ok(/[?&]duration=180(&|$)/.test(lastSlotsUrl), 'duration was not forwarded: ' + lastSlotsUrl);
+  });
 
   console.log('\nbook');
   await check('no session cannot book', async () => {
@@ -380,6 +387,25 @@ const verifyLogin = require('../netlify/functions/verify-login');
   await check('booking comes back confirmed, not pending', async () => {
     const r = await book.handler(sessionEvent('paid@example.com', body({ start: iso(7 * DAY) })));
     assert.strictEqual(parse(r).booking.status, 'accepted');
+  });
+  await check('a two hour booking sends lengthInMinutes, not duration', async () => {
+    lastBookingPayload = null;
+    await book.handler(sessionEvent('paid@example.com', body({ start: iso(8 * DAY), duration: 120 })));
+    assert.strictEqual(lastBookingPayload.lengthInMinutes, 120);
+    assert.strictEqual(lastBookingPayload.duration, undefined, 'sent the slots-endpoint spelling');
+  });
+  await check('no length asked for means the event type default', async () => {
+    lastBookingPayload = null;
+    await book.handler(sessionEvent('paid@example.com', body({ start: iso(9 * DAY) })));
+    assert.strictEqual(lastBookingPayload.lengthInMinutes, undefined);
+  });
+  await check('a nonsense length is dropped rather than sent', async () => {
+    lastBookingPayload = null;
+    await book.handler(sessionEvent('paid@example.com', body({ start: iso(10 * DAY), duration: 5 })));
+    assert.strictEqual(lastBookingPayload.lengthInMinutes, undefined);
+    lastBookingPayload = null;
+    await book.handler(sessionEvent('paid@example.com', body({ start: iso(11 * DAY), duration: 9999 })));
+    assert.strictEqual(lastBookingPayload.lengthInMinutes, undefined);
   });
 
   console.log('\ncancel');

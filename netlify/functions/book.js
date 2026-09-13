@@ -41,6 +41,12 @@ exports.handler = async (event) => {
     /* a missing display name is not a reason to block a booking */
   }
 
+  // The event type offers several lengths. Cal.com calls this field
+  // lengthInMinutes on POST /bookings, not "duration" -- that spelling is the
+  // slots endpoint's. Sending the wrong one silently books the default hour.
+  const minutes = parseInt(body.duration, 10);
+  const validLength = minutes >= 15 && minutes <= 480 ? minutes : null;
+
   const payload = Object.assign(
     {
       start: new Date(start).toISOString(),
@@ -52,7 +58,7 @@ exports.handler = async (event) => {
       },
     },
     calEventRef(),
-    body.duration ? { duration: parseInt(body.duration, 10) } : {}
+    validLength ? { lengthInMinutes: validLength } : {}
   );
 
   const res = await calFetch('/bookings', { method: 'POST', version: CAL_VERSION_WRITE, body: payload });
