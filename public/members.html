@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Members · Augusta Local 308</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="uploads/AL308%20Logo.webp" type="image/webp">
+<link rel="apple-touch-icon" href="uploads/AL308%20Logo.webp">
+<meta name="theme-color" content="#0a0b0b">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&display=swap">
+<style>
+  /* One job on this page: book the bay in three taps. Everything else lives
+     at the bottom, because that is where the other five percent of visits go. */
+  :root{
+    --page:#0a0b0b; --panel:#101211; --ink:#f4f4f1; --ink-2:#cdd0cb;
+    --muted:#83887f; --line:#2d302c; --hair:#1c1f1c; --brand:#fce300; --err:#e2725b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  a{color:var(--brand)}
+  button{font-family:inherit}
+  :focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  .panel{border:1px solid var(--line);background:var(--panel)}
+  .eyebrow{font-size:11px;font-weight:900;letter-spacing:0.16em;color:var(--brand)}
+  .label{display:block;font-size:10.5px;font-weight:900;letter-spacing:0.16em;color:var(--muted);margin-bottom:9px}
+  .note{font-size:13.5px;color:var(--muted);line-height:1.55}
+  .err{color:var(--err)}
+  .field{width:100%;background:var(--page);border:1px solid var(--line);color:var(--ink);padding:14px;font-size:16px;font-family:inherit}
+  .field:focus{border-color:var(--brand);outline:none}
+  .btn{background:var(--brand);color:#0a0b0b;font-size:15px;font-weight:900;padding:15px 22px;border:none;cursor:pointer;min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+  .btn:hover{background:#fff48a}
+  .btn-ghost{background:transparent;border:1.5px solid #4a4e49;color:#eef0ec;font-size:14px;font-weight:800;padding:13px 18px;cursor:pointer;min-height:46px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+  .btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+  .linkbtn{background:none;border:none;color:var(--brand);font-size:13.5px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline}
+  .chip{background:var(--page);border:1px solid var(--line);color:#d4d7d2;padding:11px 14px;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap;min-width:76px;text-align:center;line-height:1.35}
+  .chip:hover:not([disabled]){border-color:var(--brand)}
+  .chip[aria-pressed="true"]{background:var(--brand);color:#0a0b0b;border-color:var(--brand)}
+  .chip[disabled]{opacity:.35;cursor:default}
+  .slotgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+  /* Four across at every width so the lengths never wrap to a stray second row. */
+  #m-durations{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:420px}
+  #m-durations .chip{min-width:0}
+  .slot{background:var(--page);border:1px solid var(--line);color:var(--ink);padding:14px 8px;font-size:14px;font-weight:800;cursor:pointer;min-height:52px}
+  .slot:hover{border-color:var(--brand);color:var(--brand)}
+  .row{display:flex;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;align-items:center;padding:13px 0;border-bottom:1px solid var(--hair);font-size:14.5px}
+  .row:last-child{border-bottom:0}
+  h1{font-size:clamp(26px,5vw,34px);font-weight:900;letter-spacing:-0.03em;margin:0 0 8px}
+  h2{font-size:12px;font-weight:900;letter-spacing:0.14em;color:var(--brand);margin:0}
+</style>
+</head>
+<body>
+
+<header style="position:sticky;top:0;z-index:30;background:rgba(10,11,11,.96);border-bottom:1px solid #242724">
+  <div class="wrap" style="padding:12px 20px;display:flex;align-items:center;gap:14px">
+    <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <img src="uploads/AL308%20Logo.webp" alt="Augusta Local 308" style="height:30px;width:auto">
+      <span style="color:var(--ink);font-size:12px;font-weight:900;letter-spacing:0.14em">MEMBERS</span>
+    </a>
+    <div style="margin-left:auto;display:flex;gap:16px;align-items:center">
+      <a href="#account" id="m-account-link" style="display:none;font-size:13px;font-weight:800;text-decoration:none">Account</a>
+      <a href="/admin" id="m-admin-link" style="display:none;font-size:13px;font-weight:800;text-decoration:none">Dashboard</a>
+      <a href="/" style="font-size:13px;color:var(--muted);text-decoration:none">Site</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" style="padding:28px 20px 60px">
+
+  <!-- ============================ LOGGED OUT ============================ -->
+  <section id="m-gate" style="display:none">
+    <h1>Members</h1>
+    <p class="note" style="margin:0 0 24px">Log in to book the bay.</p>
+
+    <form id="m-login" class="panel" style="padding:22px">
+      <div style="display:grid;gap:14px">
+        <div id="m-known" style="display:none">
+          <div class="label">LOGGING IN AS</div>
+          <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+            <strong id="m-known-email" style="font-size:15.5px"></strong>
+            <button type="button" class="linkbtn" id="m-not-you" style="font-size:12.5px;color:var(--muted)">Not you?</button>
+          </div>
+        </div>
+        <div id="m-email-wrap">
+          <label class="label" for="m-email">EMAIL</label>
+          <input id="m-email" class="field" type="email" autocomplete="username" required placeholder="you@email.com">
+        </div>
+        <div>
+          <label class="label" for="m-password">PASSWORD</label>
+          <input id="m-password" class="field" type="password" autocomplete="current-password" required placeholder="Your password">
+        </div>
+        <button type="submit" class="btn" style="width:100%">Log in</button>
+      </div>
+      <div id="m-login-msg" class="note" style="margin-top:14px"></div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid #242724">
+        <button type="button" class="linkbtn" id="m-show-link">First time, or forgot your password? Email me a link</button>
+      </div>
+    </form>
+
+    <form id="m-linkform" class="panel" style="padding:22px;margin-top:14px;display:none">
+      <div class="note" style="margin-bottom:14px">Enter the email on your membership. We send a one time link, and you set a password from there.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <input id="m-link-email" class="field" type="email" required placeholder="you@email.com" style="flex:1;min-width:180px">
+        <button type="submit" class="btn">Send link</button>
+      </div>
+      <div id="m-link-msg" class="note" style="margin-top:14px"></div>
+    </form>
+
+    <div class="note" style="margin-top:22px">
+      Not a member yet? <a href="/#membership" style="font-weight:700">See membership</a> &middot;
+      Or text JD: <a href="sms:+14022157000" style="font-weight:700;text-decoration:none">402-215-7000</a>
+    </div>
+  </section>
+
+  <!-- ============================= LOGGED IN ============================ -->
+  <section id="m-member" style="display:none">
+
+    <div id="m-setpw" class="panel" style="display:none;border-color:var(--brand);background:rgba(252,227,0,.07);padding:18px;margin-bottom:22px">
+      <div style="font-size:15px;font-weight:800;margin-bottom:6px">Set a password</div>
+      <div class="note" style="margin-bottom:14px">Do this once and you will not need an email link again.</div>
+      <form id="m-setpw-form" style="display:flex;gap:10px;flex-wrap:wrap">
+        <input id="m-newpw" class="field" type="password" autocomplete="new-password" placeholder="At least 8 characters" style="flex:1;min-width:190px">
+        <button type="submit" class="btn">Save</button>
+      </form>
+      <div id="m-setpw-msg" class="note" style="margin-top:12px"></div>
+    </div>
+
+    <!-- BOOK. First thing, every time. -->
+    <div class="panel" style="margin-bottom:18px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid #242724">
+        <h2>BOOK THE BAY</h2>
+        <div style="font-size:12.5px;color:#5f635d" id="m-tz"></div>
+      </div>
+      <div style="padding:18px">
+        <div class="label">HOW LONG</div>
+        <div id="m-durations" style="margin-bottom:22px"></div>
+        <div class="label">WHICH DAY</div>
+        <div id="m-days" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:6px"></div>
+        <div id="m-times" style="margin-top:14px"></div>
+        <div id="m-book-msg" class="note" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <!-- YOUR TIMES -->
+    <div class="panel" style="margin-bottom:18px">
+      <div style="padding:16px 18px;border-bottom:1px solid #242724"><h2>YOUR TIMES</h2></div>
+      <div id="m-yours" style="padding:4px 18px 14px"></div>
+    </div>
+
+    <!-- WHO ELSE -->
+    <div class="panel" style="margin-bottom:34px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid #242724">
+        <h2>WHO'S ON THE SIM</h2>
+        <div style="font-size:12.5px;color:#5f635d">Next three weeks</div>
+      </div>
+      <div id="m-schedule" style="padding:4px 18px 14px"></div>
+    </div>
+
+    <!-- ACCOUNT. Bottom of the page on purpose. -->
+    <div id="account" class="panel">
+      <div style="padding:16px 18px;border-bottom:1px solid #242724"><h2>ACCOUNT</h2></div>
+      <div style="padding:6px 18px 18px">
+        <div class="row">
+          <span style="color:var(--muted)">Name on the calendar</span>
+          <span><strong id="m-name"></strong>
+            <button type="button" class="linkbtn" id="m-edit-name" style="margin-left:8px;font-size:12.5px">change</button></span>
+        </div>
+        <div class="row">
+          <span style="color:var(--muted)">Email</span>
+          <span id="m-email-out" style="font-weight:700"></span>
+        </div>
+        <div class="row">
+          <span style="color:var(--muted)">Membership</span>
+          <span id="m-plan" style="font-weight:700"></span>
+        </div>
+        <div class="row" id="m-renews-row">
+          <span style="color:var(--muted)">Renews</span>
+          <span id="m-renews" style="font-weight:700"></span>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+          <a href="https://billing.stripe.com/p/login/dRm3cudK49f9aZt8zm4wM00" target="_blank" rel="noopener" class="btn-ghost">Update card or billing</a>
+          <button type="button" class="btn-ghost" id="m-change-pw">Change password</button>
+          <a href="/.netlify/functions/logout" class="btn-ghost">Log out</a>
+        </div>
+        <div class="note" style="margin-top:14px">Billing opens at Stripe. Card details never touch this site.</div>
+        <div class="note" style="margin-top:18px">Something off? Text JD: <a href="sms:+14022157000" style="font-weight:700;text-decoration:none">402-215-7000</a></div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var TZ = 'America/Chicago';
+  try { TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || TZ; } catch (e) {}
+
+  // Members should not retype their email. Once they have logged in on this
+  // device we remember the address and ask only for the password. Wrapped
+  // because private windows and blocked site data make these throw.
+  var REMEMBER = 'al308_email';
+  function remembered() {
+    try { return localStorage.getItem(REMEMBER) || ''; } catch (e) { return ''; }
+  }
+  function remember(email) {
+    try { localStorage.setItem(REMEMBER, email); } catch (e) {}
+  }
+  function forget() {
+    try { localStorage.removeItem(REMEMBER); } catch (e) {}
+  }
+
+  var DURATIONS = [
+    { minutes: 60, label: '1 hr' },
+    { minutes: 120, label: '2 hrs' },
+    { minutes: 180, label: '3 hrs' },
+    { minutes: 240, label: '4 hrs' }
+  ];
+  var state = { me: null, days: [], slots: {}, selectedDay: null, duration: 60 };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function post(url, body) {
+    return fetch(url, {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {})
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) {
+        return { ok: r.ok, status: r.status, data: d };
+      });
+    });
+  }
+  function say(el, text, isError) {
+    if (!el) return;
+    el.textContent = text || '';
+    el.className = 'note' + (isError ? ' err' : '');
+  }
+  function dayISO(d) { return d.toLocaleDateString('en-CA'); }
+  function timeOf(iso) {
+    try { return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+    catch (e) { return ''; }
+  }
+  function longDate(iso) {
+    try { return new Date(iso).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }); }
+    catch (e) { return ''; }
+  }
+  function stamp(iso) {
+    try { return new Date(iso).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); }
+    catch (e) { return iso; }
+  }
+  function money(cents) {
+    return '$' + ((cents || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+  function durationLabel(mins) {
+    for (var i = 0; i < DURATIONS.length; i++) if (DURATIONS[i].minutes === mins) return DURATIONS[i].label;
+    return Math.round(mins / 60) + ' hrs';
+  }
+
+  // ---------------------------------------------------------------- gate --
+  function showGate(msg) {
+    $('m-gate').style.display = 'block';
+    var known = remembered();
+    if (known) {
+      $('m-known').style.display = 'block';
+      $('m-known-email').textContent = known;
+      $('m-email-wrap').style.display = 'none';
+      $('m-email').value = known;
+      setTimeout(function () { $('m-password').focus(); }, 60);
+    }
+    if (msg) say($('m-login-msg'), msg, true);
+  }
+
+  $('m-not-you').addEventListener('click', function () {
+    forget();
+    $('m-known').style.display = 'none';
+    $('m-email-wrap').style.display = 'block';
+    $('m-email').value = '';
+    $('m-email').focus();
+  });
+
+  $('m-show-link').addEventListener('click', function () {
+    var f = $('m-linkform');
+    f.style.display = f.style.display === 'none' ? 'block' : 'none';
+    if (f.style.display === 'block') {
+      $('m-link-email').value = $('m-email').value || remembered();
+      $('m-link-email').focus();
+    }
+  });
+
+  $('m-login').addEventListener('submit', function (e) {
+    e.preventDefault();
+    say($('m-login-msg'), 'Checking...');
+    var email = $('m-email').value;
+    post('/.netlify/functions/login', { email: email, password: $('m-password').value })
+      .then(function (res) {
+        if (res.ok && res.data.ok) { remember(res.data.email || email); location.reload(); return; }
+        say($('m-login-msg'), res.data.message || 'That did not work.', true);
+      })
+      .catch(function () { say($('m-login-msg'), 'Something went wrong. Text JD: 402-215-7000', true); });
+  });
+
+  $('m-linkform').addEventListener('submit', function (e) {
+    e.preventDefault();
+    say($('m-link-msg'), 'Sending...');
+    post('/.netlify/functions/request-login', { email: $('m-link-email').value })
+      .then(function (res) { say($('m-link-msg'), res.data.message || 'Check your inbox.', !res.ok); })
+      .catch(function () { say($('m-link-msg'), 'Something went wrong. Text JD: 402-215-7000', true); });
+  });
+
+  // ------------------------------------------------------------ password --
+  $('m-setpw-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    say($('m-setpw-msg'), 'Saving...');
+    post('/.netlify/functions/set-password', { password: $('m-newpw').value })
+      .then(function (res) {
+        if (res.ok && res.data.ok) {
+          $('m-newpw').value = '';
+          say($('m-setpw-msg'), 'Saved. Next time just your password.');
+          setTimeout(function () { $('m-setpw').style.display = 'none'; }, 2200);
+          return;
+        }
+        say($('m-setpw-msg'), res.data.message || 'Could not save that.', true);
+      })
+      .catch(function () { say($('m-setpw-msg'), 'Could not save that.', true); });
+  });
+
+  $('m-change-pw').addEventListener('click', function () {
+    $('m-setpw').style.display = 'block';
+    $('m-setpw').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function () { $('m-newpw').focus(); }, 400);
+  });
+
+  $('m-edit-name').addEventListener('click', function () {
+    var next = window.prompt('Name to show on the calendar', (state.me && state.me.name) || '');
+    if (next === null) return;
+    next = next.trim();
+    if (next.length < 2) return;
+    post('/.netlify/functions/profile', { name: next }).then(function (res) {
+      if (res.ok && res.data.ok) {
+        state.me.name = res.data.name;
+        $('m-name').textContent = res.data.name;
+        loadSchedule();
+      }
+    });
+  });
+
+  // ------------------------------------------------------------- booking --
+  function renderDurations() {
+    var el = $('m-durations');
+    el.innerHTML = DURATIONS.map(function (d) {
+      return '<button type="button" class="chip" data-mins="' + d.minutes + '" aria-pressed="' +
+        (state.duration === d.minutes ? 'true' : 'false') + '">' + esc(d.label) + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(el.querySelectorAll('[data-mins]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var mins = parseInt(btn.getAttribute('data-mins'), 10);
+        if (mins === state.duration) return;
+        state.duration = mins;
+        state.selectedDay = null;
+        say($('m-book-msg'), '');
+        renderDurations();
+        loadSlots();
+      });
+    });
+  }
+
+  function buildDays() {
+    var out = [];
+    var today = new Date();
+    for (var i = 0; i < 14; i++) {
+      var d = new Date(today.getTime() + i * 86400000);
+      out.push({
+        key: dayISO(d),
+        label: i === 0 ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' }),
+        sub: d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })
+      });
+    }
+    return out;
+  }
+
+  function renderDays() {
+    var el = $('m-days');
+    el.innerHTML = state.days.map(function (d) {
+      var open = (state.slots[d.key] || []).length;
+      return '<button type="button" class="chip" data-day="' + d.key + '"' + (open ? '' : ' disabled') +
+        ' aria-pressed="' + (state.selectedDay === d.key ? 'true' : 'false') + '">' + esc(d.label) +
+        '<br><span style="font-weight:600;font-size:11.5px">' + (open ? esc(d.sub) : 'full') + '</span></button>';
+    }).join('');
+    Array.prototype.forEach.call(el.querySelectorAll('[data-day]'), function (btn) {
+      btn.addEventListener('click', function () {
+        state.selectedDay = btn.getAttribute('data-day');
+        renderDays();
+        renderTimes();
+      });
+    });
+  }
+
+  function renderTimes() {
+    var el = $('m-times');
+    if (!state.selectedDay) {
+      var any = Object.keys(state.slots).length;
+      el.innerHTML = '<div class="note">' + (any
+        ? 'Pick a day to see open times.'
+        : 'Nothing open for ' + esc(durationLabel(state.duration)) + ' in the next two weeks. Try a shorter block, or text JD: 402-215-7000') + '</div>';
+      return;
+    }
+    var list = state.slots[state.selectedDay] || [];
+    if (!list.length) { el.innerHTML = '<div class="note">Nothing open that day.</div>'; return; }
+
+    var html = '<div class="label">' + esc(longDate(list[0].start)).toUpperCase() + '</div><div class="slotgrid">';
+    list.forEach(function (s) {
+      var label = timeOf(s.start) + (s.end ? '<br><span style="font-weight:600;font-size:11.5px;color:#83887f">to ' + esc(timeOf(s.end)) + '</span>' : '');
+      html += '<button type="button" class="slot" data-start="' + esc(s.start) + '">' + label + '</button>';
+    });
+    el.innerHTML = html + '</div>';
+
+    Array.prototype.forEach.call(el.querySelectorAll('[data-start]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var start = btn.getAttribute('data-start');
+        if (!window.confirm('Book ' + durationLabel(state.duration) + ' on ' + stamp(start) + '?')) return;
+        Array.prototype.forEach.call(el.querySelectorAll('[data-start]'), function (b) { b.disabled = true; });
+        btn.textContent = 'Booking...';
+        say($('m-book-msg'), '');
+        post('/.netlify/functions/book', { start: start, timeZone: TZ, duration: state.duration })
+          .then(function (res) {
+            if (res.ok && res.data.ok) {
+              say($('m-book-msg'), res.data.message || 'Booked.');
+              refreshMe(); loadSlots(); loadSchedule();
+              return;
+            }
+            say($('m-book-msg'), res.data.message || 'Could not book that.', true);
+            renderTimes();
+          })
+          .catch(function () {
+            say($('m-book-msg'), 'Could not book that. Text JD: 402-215-7000', true);
+            renderTimes();
+          });
+      });
+    });
+  }
+
+  function loadSlots() {
+    $('m-times').innerHTML = '<div class="note">Loading open times...</div>';
+    return fetch('/.netlify/functions/slots?days=14&duration=' + state.duration + '&timeZone=' + encodeURIComponent(TZ), { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+      .then(function (data) {
+        state.slots = data.slots || {};
+        state.days = buildDays();
+        if (!state.selectedDay || !(state.slots[state.selectedDay] || []).length) {
+          state.selectedDay = null;
+          for (var i = 0; i < state.days.length; i++) {
+            if ((state.slots[state.days[i].key] || []).length) { state.selectedDay = state.days[i].key; break; }
+          }
+        }
+        renderDays();
+        renderTimes();
+      })
+      .catch(function () {
+        $('m-days').innerHTML = '';
+        $('m-times').innerHTML = '<div class="note err">Open times are unavailable right now. Text JD: 402-215-7000</div>';
+      });
+  }
+
+  // --------------------------------------------------------- your times --
+  function renderYours() {
+    var el = $('m-yours');
+    var up = (state.me && state.me.upcoming) || [];
+    if (!up.length) { el.innerHTML = '<div class="note" style="padding:10px 0">Nothing booked yet.</div>'; return; }
+    el.innerHTML = up.map(function (b) {
+      return '<div class="row"><span style="font-weight:700">' + esc(stamp(b.start)) +
+        (b.status === 'pending' ? ' <span style="color:#83887f;font-weight:600">(waiting on JD)</span>' : '') +
+        '</span><button type="button" class="linkbtn" data-cancel="' + esc(b.uid) + '" style="color:#9ba09a">Cancel</button></div>';
+    }).join('');
+    Array.prototype.forEach.call(el.querySelectorAll('[data-cancel]'), function (btn) {
+      btn.addEventListener('click', function () {
+        if (!window.confirm('Cancel this reservation?')) return;
+        btn.disabled = true; btn.textContent = 'Cancelling...';
+        post('/.netlify/functions/cancel', { uid: btn.getAttribute('data-cancel') })
+          .then(function (res) {
+            if (res.ok && res.data.ok) { refreshMe(); loadSlots(); loadSchedule(); }
+            else { btn.disabled = false; btn.textContent = 'Cancel'; say($('m-book-msg'), res.data.message || 'Could not cancel.', true); }
+          })
+          .catch(function () { btn.disabled = false; btn.textContent = 'Cancel'; });
+      });
+    });
+  }
+
+  // ---------------------------------------------------------- schedule ---
+  function loadSchedule() {
+    var el = $('m-schedule');
+    el.innerHTML = '<div class="note" style="padding:10px 0">Loading...</div>';
+    return fetch('/.netlify/functions/schedule', { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+      .then(function (data) {
+        var list = data.bookings || [];
+        if (!list.length) { el.innerHTML = '<div class="note" style="padding:10px 0">Nothing booked yet. The place is yours.</div>'; return; }
+        var html = '', lastDay = null;
+        list.forEach(function (b) {
+          var d = longDate(b.start);
+          if (d !== lastDay) {
+            lastDay = d;
+            html += '<div class="label" style="margin:16px 0 2px">' + esc(d).toUpperCase() + '</div>';
+          }
+          html += '<div class="row"><span style="color:' + (b.mine ? 'var(--brand)' : '#d4d7d2') + ';font-weight:' + (b.mine ? '900' : '700') + '">' +
+            esc(b.who) + (b.mine ? ' (you)' : '') + '</span><span style="color:#83887f;white-space:nowrap">' +
+            esc(timeOf(b.start) + (b.end ? ' to ' + timeOf(b.end) : '')) + '</span></div>';
+        });
+        el.innerHTML = html;
+      })
+      .catch(function () { el.innerHTML = '<div class="note" style="padding:10px 0">Calendar is unavailable right now.</div>'; });
+  }
+
+  // ----------------------------------------------------------- account ---
+  function renderAccount(d) {
+    $('m-name').textContent = d.name || '';
+    $('m-email-out').textContent = d.email || '';
+    var plan = d.plan || (d.comp ? 'Comped' : 'Active');
+    if (d.amount) plan += ' &middot; ' + money(d.amount) + '/' + (d.interval === 'year' ? 'yr' : 'mo');
+    $('m-plan').innerHTML = plan;
+    if (d.renews) {
+      $('m-renews').textContent = new Date(d.renews).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) +
+        (d.cancelAtPeriodEnd ? ' (ends, not renewing)' : '');
+    } else {
+      $('m-renews-row').style.display = 'none';
+    }
+  }
+
+  // -------------------------------------------------------------- boot ---
+  function showMember(d) {
+    state.me = d;
+    $('m-member').style.display = 'block';
+    $('m-account-link').style.display = 'inline';
+    $('m-tz').textContent = TZ.split('/').pop().replace(/_/g, ' ') + ' time';
+    if (d.admin) $('m-admin-link').style.display = 'inline';
+    remember(d.email);
+    var wantsPw = new URLSearchParams(location.search).get('setpw') === '1';
+    if (!d.hasPassword || wantsPw) $('m-setpw').style.display = 'block';
+    renderAccount(d);
+    renderYours();
+    renderDurations();
+    loadSlots();
+    loadSchedule();
+  }
+
+  function refreshMe() {
+    return fetch('/.netlify/functions/me', { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+      .then(function (d) { state.me = d; renderYours(); renderAccount(d); })
+      .catch(function () {});
+  }
+
+  fetch('/.netlify/functions/me', { credentials: 'same-origin' })
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+    .then(showMember)
+    .catch(function () {
+      var params = new URLSearchParams(location.search);
+      showGate(params.get('login') === 'expired' ? "That link expired or wasn't valid. Log in, or ask for a new one." : '');
+    });
+})();
+</script>
+</body>
+</html>

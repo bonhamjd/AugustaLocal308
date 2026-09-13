@@ -208,6 +208,36 @@ function isAdmin(email) {
 
 const ACTIVE_STATUSES = ['active', 'trialing'];
 
+// The published rates, so "Family, yearly" shows instead of a bare "$850".
+// Used by the members page and the dashboard alike.
+const KNOWN_PLANS = {
+  '85000:year': 'Family, yearly',
+  '55000:year': 'Single, yearly',
+  '7500:month': 'Family, monthly',
+  '5000:month': 'Single, monthly',
+};
+
+function planLabel(sub) {
+  const item = (sub && sub.items && sub.items.data && sub.items.data[0]) || {};
+  const price = item.price || {};
+  const amount = price.unit_amount || 0;
+  const interval = (price.recurring && price.recurring.interval) || '';
+  const known = KNOWN_PLANS[amount + ':' + interval];
+  const label = known
+    ? known
+    : amount
+    ? '$' + (amount / 100).toFixed(2).replace(/\.00$/, '') + '/' + (interval === 'year' ? 'yr' : 'mo')
+    : 'Membership';
+  return { label: label, amount: amount, interval: interval };
+}
+
+function periodEnd(sub) {
+  const end =
+    (sub && sub.current_period_end) ||
+    (sub && sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].current_period_end);
+  return end ? new Date(end * 1000).toISOString() : null;
+}
+
 // Everything the site knows about one email: whether they can book, what to
 // call them, and which Stripe customer they are.
 async function memberInfo(email) {
@@ -219,6 +249,11 @@ async function memberInfo(email) {
     name: '',
     customerId: null,
     status: null,
+    plan: null,
+    amount: 0,
+    interval: '',
+    renews: null,
+    cancelAtPeriodEnd: false,
   };
 
   if (onAllowlist(clean)) {
@@ -246,9 +281,15 @@ async function memberInfo(email) {
       const subs = (subData && subData.data) || [];
       const live = subs.find((s) => ACTIVE_STATUSES.indexOf(s.status) !== -1);
       if (live) {
+        const plan = planLabel(live);
         info.active = true;
         info.customerId = cust.id;
         info.status = live.status;
+        info.plan = plan.label;
+        info.amount = plan.amount;
+        info.interval = plan.interval;
+        info.renews = periodEnd(live);
+        info.cancelAtPeriodEnd = !!live.cancel_at_period_end;
         if (cust.name) info.name = cust.name;
         break;
       }
@@ -403,6 +444,9 @@ module.exports = {
   emailList,
   onAllowlist,
   isAdmin,
+  KNOWN_PLANS,
+  planLabel,
+  periodEnd,
   stripeActiveSubscription,
   memberInfo,
   isMember,

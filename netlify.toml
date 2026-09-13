@@ -5,8 +5,16 @@
 [functions]
   node_bundler = "esbuild"
 
-# /admin is the dashboard. The page itself is public HTML; everything on it
-# comes from a function that returns 404 to anyone who is not an admin.
+# /members is where members live: book, see the calendar, manage the account.
+# The page is public HTML; every piece of data on it comes from a function that
+# checks the session and re-checks Stripe.
+[[redirects]]
+  from = "/members"
+  to = "/members.html"
+  status = 200
+
+# /admin is the dashboard. Same idea, except the function returns 404 to
+# anyone who is not an admin.
 [[redirects]]
   from = "/admin"
   to = "/admin.html"
@@ -22,6 +30,11 @@
 
 [[headers]]
   for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/members.html"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
 

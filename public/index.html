@@ -20,6 +20,8 @@
 {"@context":"https://schema.org","@type":"GolfCourse","name":"Augusta Local 308","description":"Members only indoor golf simulator in Franklin, Nebraska.","url":"https://augustalocal308.com/","telephone":"+1-402-215-7000","email":"bonham.jd@gmail.com","address":{"@type":"PostalAddress","streetAddress":"1516 L Street","addressLocality":"Franklin","addressRegion":"NE","postalCode":"68939","addressCountry":"US"},"openingHours":"Mo-Su 00:00-23:59","publicAccess":false}
 </script>
 <style>
+  /* This page sells memberships. Everything a member actually does lives on
+     /members, so nothing here has to load, log in, or wait on an API. */
   body{margin:0;background:#0a0b0b;color:#f4f4f1;font-family:"Archivo",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -28,47 +30,23 @@
   a:hover{color:#fff48a}
   ::selection{background:#fce300;color:#0a0b0b}
   :focus-visible{outline:2px solid #fce300;outline-offset:2px}
-  button{font-family:inherit}
 
   .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
   .h2{font-size:clamp(28px,3.2vw,42px);font-weight:900;letter-spacing:-0.03em;margin:0}
   .eyebrow{font-size:11px;font-weight:900;letter-spacing:0.2em;color:#fce300}
   .panel{border:1px solid #2d302c;background:#101211}
-  .btn{background:#fce300;color:#0a0b0b;font-size:15px;font-weight:900;padding:15px 22px;border:none;cursor:pointer;min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none}
+  .btn{background:#fce300;color:#0a0b0b;font-size:16px;font-weight:900;padding:19px 28px;text-decoration:none;min-height:56px;display:inline-flex;align-items:center;justify-content:center;gap:10px}
   .btn:hover{background:#fff48a;color:#0a0b0b}
-  .btn-ghost{background:transparent;border:1.5px solid #4a4e49;color:#eef0ec;font-size:15px;font-weight:800;padding:15px 22px;cursor:pointer;min-height:50px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+  .btn-ghost{border:1.5px solid #4a4e49;color:#eef0ec;font-size:16px;font-weight:800;padding:19px 28px;text-decoration:none;min-height:56px;display:inline-flex;align-items:center;justify-content:center}
   .btn-ghost:hover{border-color:#fce300;color:#fce300}
-  .field{width:100%;background:#0a0b0b;border:1px solid #2d302c;color:#f4f4f1;padding:14px;font-size:16px;font-family:inherit}
-  .field:focus{border-color:#fce300;outline:none}
-  .label{display:block;font-size:10.5px;font-weight:900;letter-spacing:0.16em;color:#83887f;margin-bottom:7px}
-  .linkbtn{background:none;border:none;color:#fce300;font-size:13.5px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline}
-  .chip{background:#0a0b0b;border:1px solid #2d302c;color:#d4d7d2;padding:10px 14px;font-size:13.5px;font-weight:800;cursor:pointer;white-space:nowrap;min-width:78px;text-align:center;line-height:1.35}
-  .chip:hover:not([disabled]){border-color:#fce300}
-  .chip[aria-pressed="true"]{background:#fce300;color:#0a0b0b;border-color:#fce300}
-  .chip[disabled]{opacity:.38;cursor:default}
-  .slot{background:#0a0b0b;border:1px solid #2d302c;color:#f4f4f1;padding:13px 10px;font-size:14px;font-weight:800;cursor:pointer}
-  .slot:hover{border-color:#fce300;color:#fce300}
-  .note{font-size:13.5px;color:#9ba09a;line-height:1.55}
-  .err{color:#e2725b}
-  .row{display:flex;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;padding:13px 0;border-bottom:1px solid #1c1f1c;font-size:14.5px;align-items:center}
-
-  /* The reserve panel. Logged out it sits beside the photo; logged in the
-     photo goes away and the booker takes the page. Padding lives here, not
-     inline, so the mobile rules below cannot strip the side gutters. */
-  #al308-panel{padding:48px 48px 44px 24px;max-width:820px;margin-left:auto;width:100%;min-width:0}
-  body.is-member #al308-hero{display:none}
-  body.is-member #reserve{grid-template-columns:1fr}
-  body.is-member #al308-panel{max-width:860px;margin:0 auto;padding:36px 24px 52px}
-  .slotgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
 
   @media (max-width:940px){
-    #al308-panel{padding:40px 20px 44px !important;max-width:none;margin-left:0}
-    body.is-member #al308-panel{padding:28px 20px 44px !important}
     [data-stack]{grid-template-columns:1fr !important}
     [data-hero]{grid-template-columns:1fr !important}
     [data-stack-2]{grid-template-columns:1fr 1fr !important}
     [data-cell]{border-left:0 !important;border-right:0 !important;padding-left:0 !important;padding-right:0 !important}
-    [data-heromedia]{min-height:240px !important;border-left:0 !important;order:-1}
+    [data-herotext]{max-width:none !important;margin-left:0 !important;padding:52px 24px 48px !important}
+    [data-heromedia]{min-height:280px !important;border-left:0 !important}
     [data-navbar]{flex-wrap:wrap !important;gap:10px !important}
     [data-navlinks]{order:3;width:100%;margin-left:0 !important;justify-content:space-between;border-top:1px solid #242724;padding-top:2px}
   }
@@ -91,118 +69,26 @@
       <a href="#room" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">Room</a>
       <a href="#swag" style="color:#b4b8b3;font-size:13px;font-weight:700;text-decoration:none;padding:9px 12px">Swag</a>
     </nav>
-    <a href="#reserve" id="al308-cta" style="margin-left:auto;background:#fce300;color:#0a0b0b;font-size:13px;font-weight:900;padding:14px 20px;text-decoration:none;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;letter-spacing:0.03em">LOG IN &amp; RESERVE</a>
+    <a href="/members" style="margin-left:auto;background:#fce300;color:#0a0b0b;font-size:13px;font-weight:900;padding:14px 22px;text-decoration:none;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;letter-spacing:0.06em">MEMBERS</a>
   </div>
 </header>
 
-<!-- ==========================================================================
-     RESERVE. First thing on the page on purpose: with twenty members, almost
-     every visit is someone booking the bay, not someone reading about it.
-     ========================================================================== -->
-<section id="top">
-  <div id="reserve" data-hero style="display:grid;grid-template-columns:1.05fr 1fr;border-bottom:1px solid #242724">
-
-    <div id="al308-panel">
-
-      <!-- Logged out --------------------------------------------------------->
-      <div id="al308-gate">
-        <div class="eyebrow" style="margin-bottom:16px">MEMBERS ONLY · FRANKLIN, NEBRASKA</div>
-        <h1 style="font-size:clamp(32px,4.2vw,52px);line-height:0.98;letter-spacing:-0.035em;font-weight:900;margin:0 0 10px">Log in and<br>reserve a time.</h1>
-        <p class="note" style="font-size:16px;max-width:38ch;margin:0 0 26px">Uneekor simulator, 4K projector, fifteen foot screen. Unlimited for members.</p>
-
-        <form id="al308-pw-form" class="panel" style="padding:22px;max-width:440px">
-          <div style="display:grid;gap:14px">
-            <div>
-              <label class="label" for="al308-email">EMAIL</label>
-              <input id="al308-email" class="field" type="email" autocomplete="username" required placeholder="you@email.com">
-            </div>
-            <div>
-              <label class="label" for="al308-password">PASSWORD</label>
-              <input id="al308-password" class="field" type="password" autocomplete="current-password" required placeholder="Your password">
-            </div>
-            <button type="submit" class="btn" style="width:100%">Log in</button>
-          </div>
-          <div id="al308-gate-msg" class="note" style="margin-top:14px"></div>
-          <div style="margin-top:16px;padding-top:16px;border-top:1px solid #242724">
-            <button type="button" class="linkbtn" id="al308-show-link">First time, or forgot your password? Email me a link</button>
-          </div>
-        </form>
-
-        <form id="al308-link-form" class="panel" style="padding:22px;max-width:440px;margin-top:14px;display:none">
-          <div class="note" style="margin-bottom:14px">Enter the email on your membership. We send a one time link, and you set a password from there.</div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <input id="al308-link-email" class="field" type="email" required placeholder="you@email.com" style="flex:1;min-width:180px">
-            <button type="submit" class="btn">Send link</button>
-          </div>
-          <div id="al308-link-msg" class="note" style="margin-top:14px"></div>
-        </form>
-
-        <div class="note" style="margin-top:22px">
-          Not a member yet? <a href="#membership" style="font-weight:700">See membership</a> · Or text JD: <a href="sms:+14022157000" style="font-weight:700;text-decoration:none">402-215-7000</a>
-        </div>
-      </div>
-
-      <!-- Logged in ---------------------------------------------------------->
-      <div id="al308-member" style="display:none">
-
-        <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:20px">
-          <div>
-            <div class="eyebrow">RESERVE THE BAY</div>
-            <div style="font-size:15px;color:#cdd0cb;margin-top:8px">
-              Booking as <strong id="al308-name" style="color:#f4f4f1"></strong>
-              <button type="button" class="linkbtn" id="al308-edit-name" style="margin-left:8px;font-size:12.5px">change</button>
-            </div>
-          </div>
-          <div style="font-size:12.5px;display:flex;gap:14px;align-items:center">
-            <a href="/admin.html" id="al308-admin-link" style="display:none;color:#fce300;font-weight:800;text-decoration:none">Dashboard</a>
-            <button type="button" class="linkbtn" id="al308-change-pw" style="color:#9ba09a">Password</button>
-            <a href="/.netlify/functions/logout" style="color:#9ba09a;text-decoration:underline">Log out</a>
-          </div>
-        </div>
-
-        <div id="al308-setpw-banner" style="display:none;border:1px solid #fce300;background:rgba(252,227,0,.07);padding:18px;margin-bottom:20px">
-          <div style="font-size:15px;font-weight:800;margin-bottom:6px">Set a password</div>
-          <div class="note" style="margin-bottom:14px">Do this once and you will not need an email link again.</div>
-          <form id="al308-setpw-form" style="display:flex;gap:10px;flex-wrap:wrap">
-            <input id="al308-newpw" class="field" type="password" autocomplete="new-password" placeholder="At least 8 characters" style="flex:1;min-width:200px">
-            <button type="submit" class="btn">Save password</button>
-          </form>
-          <div id="al308-setpw-msg" class="note" style="margin-top:12px"></div>
-        </div>
-
-        <div id="al308-yours" style="margin-bottom:24px"></div>
-
-        <div class="panel" style="margin-bottom:20px">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid #242724">
-            <div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#fce300">BOOK THE BAY</div>
-            <div style="font-size:12.5px;color:#5f635d" id="al308-tz"></div>
-          </div>
-          <div style="padding:16px 18px">
-            <div class="label" style="margin-bottom:9px">HOW LONG</div>
-            <div id="al308-durations" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px"></div>
-            <div class="label" style="margin-bottom:9px">WHICH DAY</div>
-            <div id="al308-days" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px"></div>
-            <div id="al308-times" style="margin-top:14px"></div>
-            <div id="al308-book-msg" class="note" style="margin-top:12px"></div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid #242724">
-            <div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#fce300">WHO'S ON THE SIM</div>
-            <div style="font-size:12.5px;color:#5f635d">Next three weeks. Members only.</div>
-          </div>
-          <div id="al308-schedule" style="padding:6px 18px 16px"></div>
-        </div>
-
-        <div class="note" style="margin-top:20px">Something off? Text JD: <a href="sms:+14022157000" style="font-weight:700;text-decoration:none">402-215-7000</a></div>
-      </div>
+<section id="top" data-hero style="display:grid;grid-template-columns:1.02fr 1fr;border-bottom:1px solid #242724">
+  <div data-cell data-herotext style="padding:84px 56px 76px 24px;max-width:784px;margin-left:auto;width:100%">
+    <div class="eyebrow" style="margin-bottom:22px">MEMBERS ONLY &middot; FRANKLIN, NEBRASKA</div>
+    <h1 style="font-size:clamp(42px,5.8vw,78px);line-height:0.94;letter-spacing:-0.035em;font-weight:900;margin:0 0 22px">Golf every day<br>of the year.</h1>
+    <p style="font-size:19px;line-height:1.5;color:#b4b8b3;max-width:34ch;margin:0 0 34px">Uneekor simulator, 4K projector, fifteen foot screen. Unlimited for members.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <a href="/members" class="btn">
+        Members, book a time
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </a>
+      <a href="#membership" class="btn-ghost">Become a member</a>
     </div>
-
-    <div data-heromedia id="al308-hero" style="position:relative;border-left:1px solid #242724;min-height:520px">
-      <img src="uploads/Screenshot%202026-07-28%20at%207.20.40%20PM.webp" alt="Augusta Local 308 lit up at night" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
-      <div style="position:absolute;inset:0;background:linear-gradient(90deg,#0a0b0b 0%,rgba(10,11,11,.3) 42%,rgba(10,11,11,0) 100%)"></div>
-    </div>
+  </div>
+  <div data-heromedia style="position:relative;border-left:1px solid #242724;min-height:500px">
+    <img src="uploads/Screenshot%202026-07-28%20at%207.20.40%20PM.webp" alt="Augusta Local 308 lit up at night" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+    <div style="position:absolute;inset:0;background:linear-gradient(90deg,#0a0b0b 0%,rgba(10,11,11,.3) 42%,rgba(10,11,11,0) 100%)"></div>
   </div>
 </section>
 
@@ -330,7 +216,7 @@
   <div class="wrap" style="padding:56px 24px">
     <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:26px">
       <h2 class="h2">308 Swag</h2>
-      <!-- TODO JD: this date is in the past. Update it or delete this span. -->
+      <!-- TODO JD: put a real deadline back here, or leave it as is. -->
       <span style="font-size:14.5px;color:#83887f">Pre-order.</span>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px" data-stack-2>
@@ -394,373 +280,10 @@
     </div>
     <div style="font-size:13.5px;line-height:1.9">
       <div style="font-size:10.5px;font-weight:800;letter-spacing:0.16em;color:#5f635d;margin-bottom:8px">MEMBERS</div>
-      <div><a href="https://billing.stripe.com/p/login/dRm3cudK49f9aZt8zm4wM00" target="_blank" rel="noopener" style="text-decoration:none;font-weight:700">Manage your membership</a></div>
+      <div><a href="/members" style="text-decoration:none;font-weight:700">Book the bay</a></div>
+      <div><a href="/members#account" style="text-decoration:none;font-weight:700">Your account</a></div>
     </div>
   </div>
 </footer>
-
-<script>
-(function () {
-  'use strict';
-
-  var $ = function (id) { return document.getElementById(id); };
-  var TZ = 'America/Chicago';
-  try { TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || TZ; } catch (e) {}
-
-  // The event type allows 60/120/180/240 minute bookings. Asking Cal.com for a
-  // longer slot returns only the starts where that whole block is free, so the
-  // duration has to be chosen before the times are fetched, not after.
-  var DURATIONS = [
-    { minutes: 60, label: '1 hr' },
-    { minutes: 120, label: '2 hrs' },
-    { minutes: 180, label: '3 hrs' },
-    { minutes: 240, label: '4 hrs' }
-  ];
-  var state = { me: null, days: [], slots: {}, selectedDay: null, duration: 60 };
-
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
-  function post(url, body) {
-    return fetch(url, {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body || {})
-    }).then(function (r) {
-      return r.json().catch(function () { return {}; }).then(function (d) {
-        return { ok: r.ok, status: r.status, data: d };
-      });
-    });
-  }
-  function say(el, text, isError) {
-    if (!el) return;
-    el.textContent = text || '';
-    el.className = 'note' + (isError ? ' err' : '');
-  }
-  function dayISO(d) { return d.toLocaleDateString('en-CA'); }
-  function timeOf(iso) {
-    try { return new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
-    catch (e) { return ''; }
-  }
-  function longDate(iso) {
-    try { return new Date(iso).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }); }
-    catch (e) { return ''; }
-  }
-  function stamp(iso) {
-    try { return new Date(iso).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); }
-    catch (e) { return iso; }
-  }
-
-  // -- Logged out ----------------------------------------------------------
-  $('al308-show-link').addEventListener('click', function () {
-    var f = $('al308-link-form');
-    f.style.display = f.style.display === 'none' ? 'block' : 'none';
-    if (f.style.display === 'block') $('al308-link-email').focus();
-  });
-
-  $('al308-pw-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var msg = $('al308-gate-msg');
-    say(msg, 'Checking...');
-    post('/.netlify/functions/login', {
-      email: $('al308-email').value,
-      password: $('al308-password').value
-    }).then(function (res) {
-      if (res.ok && res.data.ok) { location.href = '/#reserve'; location.reload(); return; }
-      say(msg, res.data.message || 'That did not work.', true);
-    }).catch(function () {
-      say(msg, 'Something went wrong. Text JD: 402-215-7000', true);
-    });
-  });
-
-  $('al308-link-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var msg = $('al308-link-msg');
-    say(msg, 'Sending...');
-    post('/.netlify/functions/request-login', { email: $('al308-link-email').value })
-      .then(function (res) { say(msg, res.data.message || 'Check your inbox.', !res.ok); })
-      .catch(function () { say(msg, 'Something went wrong. Text JD: 402-215-7000', true); });
-  });
-
-  // -- Set password --------------------------------------------------------
-  $('al308-setpw-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var msg = $('al308-setpw-msg');
-    say(msg, 'Saving...');
-    post('/.netlify/functions/set-password', { password: $('al308-newpw').value })
-      .then(function (res) {
-        if (res.ok && res.data.ok) {
-          $('al308-newpw').value = '';
-          say(msg, 'Saved. Next time just use your email and password.');
-          setTimeout(function () { $('al308-setpw-banner').style.display = 'none'; }, 2500);
-          return;
-        }
-        say(msg, res.data.message || 'Could not save that.', true);
-      })
-      .catch(function () { say(msg, 'Could not save that.', true); });
-  });
-
-  $('al308-change-pw').addEventListener('click', function () {
-    var b = $('al308-setpw-banner');
-    b.style.display = 'block';
-    $('al308-newpw').focus();
-  });
-
-  $('al308-edit-name').addEventListener('click', function () {
-    var current = state.me && state.me.name ? state.me.name : '';
-    var next = window.prompt('Name to show on the calendar', current);
-    if (next === null) return;
-    next = next.trim();
-    if (next.length < 2) return;
-    post('/.netlify/functions/profile', { name: next }).then(function (res) {
-      if (res.ok && res.data.ok) {
-        state.me.name = res.data.name;
-        $('al308-name').textContent = res.data.name;
-        loadSchedule();
-      }
-    });
-  });
-
-  // -- Your bookings -------------------------------------------------------
-  function renderYours() {
-    var el = $('al308-yours');
-    var up = (state.me && state.me.upcoming) || [];
-    if (!up.length) {
-      el.innerHTML = '<div class="note">Nothing booked yet. Pick a day below.</div>';
-      return;
-    }
-    var html = '<div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#83887f;margin-bottom:6px">YOUR TIMES</div>';
-    up.forEach(function (b) {
-      html += '<div class="row">' +
-        '<span style="font-weight:700">' + esc(stamp(b.start)) +
-        (b.status === 'pending' ? ' <span style="color:#83887f;font-weight:600">(waiting on JD)</span>' : '') +
-        '</span>' +
-        '<button type="button" class="linkbtn" data-cancel="' + esc(b.uid) + '" style="color:#9ba09a">Cancel</button>' +
-        '</div>';
-    });
-    el.innerHTML = html;
-
-    Array.prototype.forEach.call(el.querySelectorAll('[data-cancel]'), function (btn) {
-      btn.addEventListener('click', function () {
-        if (!window.confirm('Cancel this reservation?')) return;
-        btn.disabled = true;
-        btn.textContent = 'Cancelling...';
-        post('/.netlify/functions/cancel', { uid: btn.getAttribute('data-cancel') })
-          .then(function (res) {
-            if (res.ok && res.data.ok) { refreshMe(); loadSlots(); loadSchedule(); }
-            else { btn.disabled = false; btn.textContent = 'Cancel'; say($('al308-book-msg'), res.data.message || 'Could not cancel.', true); }
-          })
-          .catch(function () { btn.disabled = false; btn.textContent = 'Cancel'; });
-      });
-    });
-  }
-
-  // -- Day strip and times -------------------------------------------------
-  function buildDays() {
-    var out = [];
-    var today = new Date();
-    for (var i = 0; i < 14; i++) {
-      var d = new Date(today.getTime() + i * 86400000);
-      out.push({
-        key: dayISO(d),
-        label: i === 0 ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' }),
-        sub: d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })
-      });
-    }
-    return out;
-  }
-
-  function durationLabel(minutes) {
-    for (var i = 0; i < DURATIONS.length; i++) {
-      if (DURATIONS[i].minutes === minutes) return DURATIONS[i].label;
-    }
-    return Math.round(minutes / 60) + ' hrs';
-  }
-
-  function renderDurations() {
-    var el = $('al308-durations');
-    var html = '';
-    DURATIONS.forEach(function (d) {
-      html += '<button type="button" class="chip" data-mins="' + d.minutes + '"' +
-        ' aria-pressed="' + (state.duration === d.minutes ? 'true' : 'false') + '">' +
-        esc(d.label) + '</button>';
-    });
-    el.innerHTML = html;
-    Array.prototype.forEach.call(el.querySelectorAll('[data-mins]'), function (btn) {
-      btn.addEventListener('click', function () {
-        var mins = parseInt(btn.getAttribute('data-mins'), 10);
-        if (mins === state.duration) return;
-        state.duration = mins;
-        state.selectedDay = null;
-        say($('al308-book-msg'), '');
-        renderDurations();
-        loadSlots();
-      });
-    });
-  }
-
-  function renderDays() {
-    var el = $('al308-days');
-    var html = '';
-    state.days.forEach(function (d) {
-      var open = (state.slots[d.key] || []).length;
-      html += '<button type="button" class="chip" data-day="' + d.key + '"' +
-        (open ? '' : ' disabled') +
-        ' aria-pressed="' + (state.selectedDay === d.key ? 'true' : 'false') + '">' +
-        esc(d.label) + '<br><span style="font-weight:600;font-size:11.5px">' +
-        (open ? esc(d.sub) : 'full') + '</span></button>';
-    });
-    el.innerHTML = html;
-    Array.prototype.forEach.call(el.querySelectorAll('[data-day]'), function (btn) {
-      btn.addEventListener('click', function () {
-        state.selectedDay = btn.getAttribute('data-day');
-        renderDays();
-        renderTimes();
-      });
-    });
-  }
-
-  function renderTimes() {
-    var el = $('al308-times');
-    if (!state.selectedDay) {
-      var any = Object.keys(state.slots).length;
-      el.innerHTML = '<div class="note">' + (any ? 'Pick a day to see open times.' : 'Nothing open for ' + esc(durationLabel(state.duration)) + ' in the next two weeks. Try a shorter block, or text JD: 402-215-7000') + '</div>';
-      return;
-    }
-    var list = state.slots[state.selectedDay] || [];
-    if (!list.length) { el.innerHTML = '<div class="note">Nothing open that day.</div>'; return; }
-
-    var html = '<div style="font-size:12px;font-weight:900;letter-spacing:0.14em;color:#83887f;margin-bottom:10px">' +
-      esc(longDate(list[0].start)).toUpperCase() + '</div>' +
-      '<div class="slotgrid">';
-    list.forEach(function (s) {
-      var label = timeOf(s.start) + (s.end ? ' to ' + timeOf(s.end) : '');
-      html += '<button type="button" class="slot" data-start="' + esc(s.start) + '">' + esc(label) + '</button>';
-    });
-    html += '</div>';
-    el.innerHTML = html;
-
-    Array.prototype.forEach.call(el.querySelectorAll('[data-start]'), function (btn) {
-      btn.addEventListener('click', function () {
-        var start = btn.getAttribute('data-start');
-        if (!window.confirm('Book ' + durationLabel(state.duration) + ' on ' + stamp(start) + '?')) return;
-        Array.prototype.forEach.call(el.querySelectorAll('[data-start]'), function (b) { b.disabled = true; });
-        btn.textContent = 'Booking...';
-        say($('al308-book-msg'), '');
-        post('/.netlify/functions/book', { start: start, timeZone: TZ, duration: state.duration })
-          .then(function (res) {
-            if (res.ok && res.data.ok) {
-              say($('al308-book-msg'), res.data.message || 'Booked.');
-              refreshMe();
-              loadSlots();
-              loadSchedule();
-              return;
-            }
-            say($('al308-book-msg'), res.data.message || 'Could not book that.', true);
-            renderTimes();
-          })
-          .catch(function () {
-            say($('al308-book-msg'), 'Could not book that. Text JD: 402-215-7000', true);
-            renderTimes();
-          });
-      });
-    });
-  }
-
-  function loadSlots() {
-    $('al308-times').innerHTML = '<div class="note">Loading open times...</div>';
-    return fetch('/.netlify/functions/slots?days=14&duration=' + state.duration + '&timeZone=' + encodeURIComponent(TZ), { credentials: 'same-origin' })
-      .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
-      .then(function (data) {
-        state.slots = data.slots || {};
-        state.days = buildDays();
-        if (!state.selectedDay || !(state.slots[state.selectedDay] || []).length) {
-          state.selectedDay = null;
-          for (var i = 0; i < state.days.length; i++) {
-            if ((state.slots[state.days[i].key] || []).length) { state.selectedDay = state.days[i].key; break; }
-          }
-        }
-        renderDays();
-        renderTimes();
-      })
-      .catch(function () {
-        $('al308-days').innerHTML = '';
-        $('al308-times').innerHTML = '<div class="note err">Open times are unavailable right now. Text JD: 402-215-7000</div>';
-      });
-  }
-
-  // -- Shared calendar -----------------------------------------------------
-  function loadSchedule() {
-    var el = $('al308-schedule');
-    el.innerHTML = '<div class="note" style="padding:12px 0">Loading...</div>';
-    return fetch('/.netlify/functions/schedule', { credentials: 'same-origin' })
-      .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
-      .then(function (data) {
-        var list = data.bookings || [];
-        if (!list.length) {
-          el.innerHTML = '<div class="note" style="padding:12px 0">Nothing booked yet. The place is yours.</div>';
-          return;
-        }
-        var html = '';
-        var lastDay = null;
-        list.forEach(function (b) {
-          var d = longDate(b.start);
-          if (d !== lastDay) {
-            lastDay = d;
-            html += '<div style="font-size:11px;font-weight:900;letter-spacing:0.14em;color:#5f635d;margin:16px 0 4px">' + esc(d).toUpperCase() + '</div>';
-          }
-          html += '<div class="row">' +
-            '<span style="color:' + (b.mine ? '#fce300' : '#d4d7d2') + ';font-weight:' + (b.mine ? '900' : '700') + '">' +
-            esc(b.who) + (b.mine ? ' (you)' : '') + '</span>' +
-            '<span style="color:#83887f;white-space:nowrap">' + esc(timeOf(b.start) + (b.end ? ' to ' + timeOf(b.end) : '')) + '</span>' +
-            '</div>';
-        });
-        el.innerHTML = html;
-      })
-      .catch(function () {
-        el.innerHTML = '<div class="note" style="padding:12px 0">Calendar is unavailable right now.</div>';
-      });
-  }
-
-  // -- Boot ----------------------------------------------------------------
-  function showMember(data) {
-    state.me = data;
-    $('al308-gate').style.display = 'none';
-    $('al308-member').style.display = 'block';
-    // Members get the full width. The photo sells memberships; they already bought.
-    document.body.classList.add('is-member');
-    $('al308-cta').textContent = 'RESERVE';
-    $('al308-name').textContent = data.name || data.email;
-    $('al308-tz').textContent = 'Times shown in ' + TZ.split('/').pop().replace(/_/g, ' ');
-    if (data.admin) $('al308-admin-link').style.display = 'inline';
-    var wantsPw = new URLSearchParams(location.search).get('setpw') === '1';
-    if (!data.hasPassword || wantsPw) $('al308-setpw-banner').style.display = 'block';
-    renderYours();
-    renderDurations();
-    loadSlots();
-    loadSchedule();
-  }
-
-  function refreshMe() {
-    return fetch('/.netlify/functions/me', { credentials: 'same-origin' })
-      .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
-      .then(function (data) { state.me = data; renderYours(); })
-      .catch(function () {});
-  }
-
-  fetch('/.netlify/functions/me', { credentials: 'same-origin' })
-    .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
-    .then(showMember)
-    .catch(function () {
-      var params = new URLSearchParams(location.search);
-      if (params.get('login') === 'expired') {
-        say($('al308-gate-msg'), "That link expired or wasn't valid. Log in, or ask for a new link.", true);
-      }
-    });
-})();
-</script>
 </body>
 </html>

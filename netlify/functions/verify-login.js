@@ -11,7 +11,7 @@ exports.handler = async (event) => {
   const data = verify(token, ENV.sessionSecret());
 
   if (!data || data.purpose !== 'login') {
-    return { statusCode: 302, headers: { Location: site + '/?login=expired#reserve' } };
+    return { statusCode: 302, headers: { Location: site + '/members?login=expired' } };
   }
 
   let hasPassword = false;
@@ -25,6 +25,6 @@ exports.handler = async (event) => {
   return {
     statusCode: 302,
     multiValueHeaders: { 'Set-Cookie': [sessionCookie(data.email)] },
-    headers: { Location: site + (hasPassword ? '/#reserve' : '/?setpw=1#reserve') },
+    headers: { Location: site + '/members' + (hasPassword ? '' : '?setpw=1') },
   };
 };

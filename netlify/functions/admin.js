@@ -9,19 +9,11 @@
 // still loads and says which part is dark, rather than failing whole.
 
 const {
-  ENV, stripeList, stripeGet, qs, emailList, isAdmin, calAllBookings, requireActiveSession, json,
+  ENV, stripeList, emailList, isAdmin, planLabel, periodEnd, calAllBookings, requireActiveSession, json,
 } = require('./_shared');
 
 const ACTIVE = ['active', 'trialing'];
 const AT_RISK = ['past_due', 'unpaid', 'incomplete'];
-
-// The published rates, so the dashboard shows "Family, yearly" and not "$850".
-const KNOWN_PLANS = {
-  '85000:year': 'Family, yearly',
-  '55000:year': 'Single, yearly',
-  '7500:month': 'Family, monthly',
-  '5000:month': 'Single, monthly',
-};
 
 function monthKey(unixOrIso) {
   const d = typeof unixOrIso === 'number' ? new Date(unixOrIso * 1000) : new Date(unixOrIso);
@@ -37,21 +29,6 @@ function monthsBack(n) {
     out.push(m.toISOString().slice(0, 7));
   }
   return out;
-}
-
-function planLabel(sub) {
-  const item = (sub.items && sub.items.data && sub.items.data[0]) || {};
-  const price = item.price || {};
-  const amount = price.unit_amount || 0;
-  const interval = (price.recurring && price.recurring.interval) || '';
-  const known = KNOWN_PLANS[amount + ':' + interval];
-  if (known) return { label: known, amount: amount, interval: interval };
-  if (!amount) return { label: 'Unknown plan', amount: 0, interval: interval };
-  return {
-    label: '$' + (amount / 100).toFixed(2).replace(/\.00$/, '') + '/' + (interval === 'year' ? 'yr' : 'mo'),
-    amount: amount,
-    interval: interval,
-  };
 }
 
 function monthlyValue(amount, interval) {
@@ -145,9 +122,7 @@ exports.handler = async (event) => {
       r.interval = plan.interval;
       r.status = sub.status;
       r.since = sub.start_date ? new Date(sub.start_date * 1000).toISOString() : null;
-      const end = sub.current_period_end ||
-        (sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].current_period_end);
-      r.renews = end ? new Date(end * 1000).toISOString() : null;
+      r.renews = periodEnd(sub);
       r.cancelAtPeriodEnd = !!sub.cancel_at_period_end;
     }
   });
