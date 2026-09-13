@@ -315,9 +315,9 @@
       '<div class="panel tile"><div class="eyebrow">PAYING MEMBERS</div>' +
         '<div class="v tnum">' + d.summary.paying + '</div>' +
         '<div class="sub">' + (d.summary.comped ? '+ ' + d.summary.comped + ' comped' : 'no comps') + '</div></div>' +
-      '<div class="panel tile"><div class="eyebrow">NOT PAID</div>' +
-        '<div class="v tnum" style="color:' + (d.summary.atRisk ? 'var(--warning)' : 'var(--ink)') + '">' + d.summary.atRisk + '</div>' +
-        '<div class="sub">' + (d.summary.atRisk ? 'card failed or past due' : 'everyone is current') + '</div></div>' +
+      '<div class="panel tile"><div class="eyebrow">NEEDS ATTENTION</div>' +
+        '<div class="v tnum" style="color:' + (d.summary.problems ? 'var(--warning)' : 'var(--ink)') + '">' + (d.summary.problems || 0) + '</div>' +
+        '<div class="sub">' + (d.summary.problems ? money(d.summary.atRiskMonthly) + ' a month at stake' : 'nothing is failing') + '</div></div>' +
       '<div class="panel tile"><div class="eyebrow">NO PASSWORD YET</div>' +
         '<div class="v tnum" style="color:' + ((d.needPassword || []).length ? 'var(--warning)' : 'var(--ink)') + '">' + (d.needPassword || []).length + '</div>' +
         '<div class="sub">' + ((d.needPassword || []).length ? 'cannot log in until you set one' : 'everyone can log in') + '</div></div>' +
@@ -328,6 +328,30 @@
         '<div class="v tnum">' + (d.haveRevenue ? money(last.total) : '&mdash;') + '</div>' +
         '<div class="sub">' + (d.haveRevenue ? delta(last.total, prev && prev.total) : 'needs Charges: Read on the Stripe key') + '</div></div>' +
       '</div>';
+
+    // -- Money leaking. The single most important panel on this page. -----
+    if ((d.problems || []).length) {
+      html += '<section class="panel chart"><h2>Money leaking</h2>' +
+        '<div class="muted" style="margin-top:5px">Memberships that have quietly stopped collecting. ' +
+        'Fixing all of them is ' + money(d.summary.atRiskMonthly) + ' a month.</div>' +
+        '<div class="scroll" style="margin-top:18px"><table><thead><tr>' +
+        '<th>Member</th><th>Problem</th><th>What to do</th><th>Monthly</th></tr></thead><tbody>';
+      d.problems.forEach(function (x) {
+        var fix = x.kind === 'no_card'
+          ? 'Text them the billing link to add a card'
+          : x.kind === 'double_billed'
+          ? 'Cancel the extra subscription in Stripe'
+          : 'Card failed. Text them the billing link';
+        html += '<tr>' +
+          '<td><div style="font-weight:800">' + esc(x.name) + '</div>' +
+            '<div class="muted" style="font-size:12px">' + esc(x.email) + '</div></td>' +
+          '<td><span class="dot" style="background:var(--warning)"></span>' + esc(x.detail) + '</td>' +
+          '<td class="muted">' + esc(fix) + '</td>' +
+          '<td class="tnum">' + money(x.monthly || 0) + '</td>' +
+          '</tr>';
+      });
+      html += '</tbody></table></div></section>';
+    }
 
     // -- Revenue -----------------------------------------------------------
     if (d.haveRevenue) {

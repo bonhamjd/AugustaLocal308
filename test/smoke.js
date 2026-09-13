@@ -68,15 +68,24 @@ global.fetch = async (url, opts = {}) => {
   }
   if (url.startsWith('https://api.stripe.com/v1/subscriptions')) {
     const custMatch = url.match(/customer=([^&]+)/);
-    const makeSub = (custId, email, name, amount, interval) => ({
-      id: 'sub_' + custId,
-      status: 'active',
-      start_date: unix(-200 * DAY),
-      current_period_end: unix(20 * DAY),
-      cancel_at_period_end: false,
-      customer: { id: custId, email: email, name: name },
-      items: { data: [{ price: { unit_amount: amount, recurring: { interval: interval } } }] },
-    });
+    const makeSub = (custId, email, name, amount, interval, opts) => {
+      const o = opts || {};
+      return {
+        id: o.id || 'sub_' + custId,
+        status: o.status || 'active',
+        start_date: unix(-200 * DAY),
+        current_period_end: unix((o.endsInDays === undefined ? 20 : o.endsInDays) * DAY),
+        cancel_at_period_end: false,
+        default_payment_method: o.noCard ? null : 'pm_' + custId,
+        customer: {
+          id: custId,
+          email: email,
+          name: name,
+          invoice_settings: { default_payment_method: o.noCard ? null : 'pm_' + custId },
+        },
+        items: { data: [{ price: { unit_amount: amount, recurring: { interval: interval } } }] },
+      };
+    };
     if (custMatch) {
       // Per-customer lookup used by memberInfo.
       return res(200, { data: [{ id: 'sub_1', status: 'active' }], has_more: false });
@@ -87,6 +96,13 @@ global.fetch = async (url, opts = {}) => {
       data: [
         makeSub('cus_paid', 'paid@example.com', 'Jake Miller', 55000, 'year'),
         makeSub('cus_dale', 'dale@example.com', 'Dale Warner', 5000, 'month'),
+        // Dale is on two live plans at once. Real case: one member in the old
+        // system carried a Single and a Family plan side by side.
+        makeSub('cus_dale', 'dale@example.com', 'Dale Warner', 5000, 'month', { id: 'sub_dale_dupe' }),
+        // Card failed three months ago and nothing said so.
+        makeSub('cus_lapse', 'lapsed@example.com', 'Gus Lapsed', 5000, 'month', { status: 'past_due', endsInDays: -90 }),
+        // Active, but no card anywhere, so the next renewal cannot charge.
+        makeSub('cus_nocard', 'nocard@example.com', 'Hal Nocard', 5000, 'month', { noCard: true }),
       ],
     });
   }
@@ -457,10 +473,10 @@ const verifyLogin = require('../netlify/functions/verify-login');
     const r = await admin.handler(sessionEvent('bonham.jd@gmail.com', { queryStringParameters: { months: '12' } }));
     assert.strictEqual(r.statusCode, 200);
     const d = parse(r);
-    assert.strictEqual(d.summary.paying, 2, 'wrong paying count');
+    assert.strictEqual(d.summary.paying, 3, 'wrong paying count');
     assert.ok(d.summary.comped >= 1, 'comps not counted');
-    // Single yearly 550 -> 4583/mo, plus Single monthly 5000 -> 9583 cents.
-    assert.strictEqual(d.summary.mrr, 4583 + 5000);
+    // Single yearly 550 -> 4583/mo, plus two Single monthly at 5000.
+    assert.strictEqual(d.summary.mrr, 4583 + 5000 + 5000);
     assert.strictEqual(d.revenue.length, 12);
     assert.strictEqual(d.usage.length, 12);
   });
@@ -481,6 +497,41 @@ const verifyLogin = require('../netlify/functions/verify-login');
     const d = parse(r);
     const hours = d.usage.reduce((s, m) => s + m.hours, 0);
     assert.strictEqual(hours, 2, 'only the single past two hour booking should count');
+  });
+
+  await check('a failing membership is flagged with how long it has been failing', async () => {
+    const r = await admin.handler(sessionEvent('bonham.jd@gmail.com', { queryStringParameters: { months: '12' } }));
+    const d = parse(r);
+    const x = (d.problems || []).find((q) => q.email === 'lapsed@example.com');
+    assert.ok(x, 'past due member not in problems');
+    assert.strictEqual(x.kind, 'payment_failing');
+    assert.ok(/past due/.test(x.detail), 'no day count on the past due row: ' + x.detail);
+    assert.strictEqual(x.monthly, 5000);
+  });
+  await check('a paying member with no card on file is flagged before the renewal fails', async () => {
+    const r = await admin.handler(sessionEvent('bonham.jd@gmail.com', { queryStringParameters: { months: '12' } }));
+    const d = parse(r);
+    const x = (d.problems || []).find((q) => q.kind === 'no_card');
+    assert.ok(x, 'no-card member not flagged');
+    assert.strictEqual(x.email, 'nocard@example.com');
+  });
+  await check('someone on two live plans at once is flagged as double billed', async () => {
+    const r = await admin.handler(sessionEvent('bonham.jd@gmail.com', { queryStringParameters: { months: '12' } }));
+    const d = parse(r);
+    const x = (d.problems || []).find((q) => q.kind === 'double_billed');
+    assert.ok(x, 'duplicate subscription not flagged');
+    assert.strictEqual(x.email, 'dale@example.com');
+  });
+  await check('a member who is current and carded is not flagged', async () => {
+    const r = await admin.handler(sessionEvent('bonham.jd@gmail.com', { queryStringParameters: { months: '12' } }));
+    const d = parse(r);
+    assert.ok(!(d.problems || []).some((q) => q.email === 'paid@example.com'), 'a healthy member was flagged');
+  });
+  await check('the money at stake adds up the flagged plans', async () => {
+    const r = await admin.handler(sessionEvent('bonham.jd@gmail.com', { queryStringParameters: { months: '12' } }));
+    const d = parse(r);
+    assert.strictEqual(d.summary.problems, 3);
+    assert.strictEqual(d.summary.atRiskMonthly, 15000);
   });
 
   console.log('\nadmin sets a member password');

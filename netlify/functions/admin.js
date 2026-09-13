@@ -102,6 +102,7 @@ exports.handler = async (event) => {
       byEmail[key] = {
         email: key, name: '', plan: '', amount: 0, interval: '', status: 'none',
         since: null, renews: null, comp: false, bookings: 0, hours: 0, lastBooking: null,
+        noCard: false, subCount: 0, overdueDays: 0,
       };
     }
     return byEmail[key];
@@ -111,6 +112,9 @@ exports.handler = async (event) => {
     const cust = sub.customer && typeof sub.customer === 'object' ? sub.customer : {};
     const r = row(cust.email);
     if (!r) return;
+    // Two live subscriptions on one person means they are being charged twice.
+    // Birrdi let that happen and nobody saw it, so count them here.
+    if (ACTIVE.concat(AT_RISK).indexOf(sub.status) !== -1) r.subCount += 1;
     const plan = planLabel(sub);
     const better =
       ACTIVE.indexOf(sub.status) !== -1 ||
@@ -125,6 +129,10 @@ exports.handler = async (event) => {
       r.since = sub.start_date ? new Date(sub.start_date * 1000).toISOString() : null;
       r.renews = periodEnd(sub);
       r.cancelAtPeriodEnd = !!sub.cancel_at_period_end;
+      // No default card anywhere means the next renewal cannot charge. This is
+      // how a membership goes quiet without anyone cancelling it.
+      const settings = cust.invoice_settings || {};
+      r.noCard = !sub.default_payment_method && !settings.default_payment_method;
     }
   });
 
@@ -190,6 +198,12 @@ exports.handler = async (event) => {
     .map(function (r) {
       r.hours = Math.round(r.hours * 10) / 10;
       if (!r.name) r.name = r.email.split('@')[0];
+      // How long a failed membership has been failing. Isaak Grube sat seven
+      // months past due in the old system before anyone noticed.
+      if (AT_RISK.indexOf(r.status) !== -1 && r.renews) {
+        const days = Math.floor((Date.now() - new Date(r.renews).getTime()) / 86400000);
+        r.overdueDays = days > 0 ? days : 0;
+      }
       return r;
     })
     .sort(function (a, b) {
@@ -233,6 +247,39 @@ exports.handler = async (event) => {
     .slice(0, 10)
     .map((r) => ({ name: r.name, email: r.email, bookings: r.bookings, hours: r.hours }));
 
+  // Things that quietly cost money. Each one is a real case from the old
+  // system: a subscription that stopped charging, a member with no card, and
+  // one person billed on two plans at once.
+  const problems = [];
+  atRisk.forEach(function (r) {
+    problems.push({
+      kind: 'payment_failing',
+      name: r.name,
+      email: r.email,
+      detail: r.status + (r.overdueDays ? ', ' + r.overdueDays + ' days past due' : ''),
+      monthly: monthlyValue(r.amount, r.interval),
+    });
+  });
+  paying.filter((r) => r.noCard).forEach(function (r) {
+    problems.push({
+      kind: 'no_card',
+      name: r.name,
+      email: r.email,
+      detail: 'no card on file, next renewal will fail',
+      monthly: monthlyValue(r.amount, r.interval),
+    });
+  });
+  rows.filter((r) => r.subCount > 1).forEach(function (r) {
+    problems.push({
+      kind: 'double_billed',
+      name: r.name,
+      email: r.email,
+      detail: r.subCount + ' live subscriptions on one person',
+      monthly: monthlyValue(r.amount, r.interval),
+    });
+  });
+  const atRiskMonthly = problems.reduce((sum, x) => sum + (x.monthly || 0), 0);
+
   const revenueList = monthsBack(months).map((m) => revenueMonths[m]);
   const usageList = monthsBack(months).map(function (m) {
     const u = usageMonths[m];
@@ -253,7 +300,10 @@ exports.handler = async (event) => {
       former: former.length,
       mrr: mrr,
       annualRunRate: mrr * 12,
+      problems: problems.length,
+      atRiskMonthly: atRiskMonthly,
     },
+    problems: problems,
     revenue: revenueList,
     usage: usageList,
     topMembers: top,
