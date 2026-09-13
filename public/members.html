@@ -46,6 +46,8 @@
   #m-durations .chip{min-width:0}
   .slot{background:var(--page);border:1px solid var(--line);color:var(--ink);padding:14px 8px;font-size:14px;font-weight:800;cursor:pointer;min-height:52px}
   .slot:hover{border-color:var(--brand);color:var(--brand)}
+  .show{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13.5px;color:var(--muted);cursor:pointer;user-select:none}
+  .show input{width:17px;height:17px;accent-color:var(--brand);cursor:pointer}
   .row{display:flex;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;align-items:center;padding:13px 0;border-bottom:1px solid var(--hair);font-size:14.5px}
   .row:last-child{border-bottom:0}
   h1{font-size:clamp(26px,5vw,34px);font-weight:900;letter-spacing:-0.03em;margin:0 0 8px}
@@ -91,6 +93,7 @@
         <div>
           <label class="label" for="m-password">PASSWORD</label>
           <input id="m-password" class="field" type="password" autocomplete="current-password" required placeholder="Your password">
+          <label class="show"><input type="checkbox" data-show="m-password"> Show password</label>
         </div>
         <button type="submit" class="btn" style="width:100%">Log in</button>
       </div>
@@ -125,6 +128,7 @@
         <input id="m-newpw" class="field" type="password" autocomplete="new-password" placeholder="At least 8 characters" style="flex:1;min-width:190px">
         <button type="submit" class="btn">Save</button>
       </form>
+      <label class="show"><input type="checkbox" data-show="m-newpw"> Show password</label>
       <div id="m-setpw-msg" class="note" style="margin-top:12px"></div>
     </div>
 
@@ -264,6 +268,14 @@
     for (var i = 0; i < DURATIONS.length; i++) if (DURATIONS[i].minutes === mins) return DURATIONS[i].label;
     return Math.round(mins / 60) + ' hrs';
   }
+
+  // Show password. One handler for every checkbox that names a field.
+  Array.prototype.forEach.call(document.querySelectorAll('[data-show]'), function (box) {
+    box.addEventListener('change', function () {
+      var field = $(box.getAttribute('data-show'));
+      if (field) field.type = box.checked ? 'text' : 'password';
+    });
+  });
 
   // ---------------------------------------------------------------- gate --
   function showGate(msg) {
@@ -418,7 +430,8 @@
 
     var html = '<div class="label">' + esc(longDate(list[0].start)).toUpperCase() + '</div><div class="slotgrid">';
     list.forEach(function (s) {
-      var label = timeOf(s.start) + (s.end ? '<br><span style="font-weight:600;font-size:11.5px;color:#83887f">to ' + esc(timeOf(s.end)) + '</span>' : '');
+      var ends = s.end || new Date(new Date(s.start).getTime() + state.duration * 60000).toISOString();
+      var label = timeOf(s.start) + '<br><span style="font-weight:600;font-size:11.5px;color:#83887f">to ' + esc(timeOf(ends)) + '</span>';
       html += '<button type="button" class="slot" data-start="' + esc(s.start) + '">' + label + '</button>';
     });
     el.innerHTML = html + '</div>';
