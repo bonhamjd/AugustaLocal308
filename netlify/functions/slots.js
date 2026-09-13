@@ -25,24 +25,25 @@ exports.handler = async (event) => {
   const now = new Date();
   const end = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
 
-  // Both spellings are sent on purpose: Cal.com has documented this parameter
-  // as "format" and as "slotFormat" in different places, and the extra one is
-  // ignored. Either way we get ranges when the API supports them.
+  // No format parameter. Cal.com documents this one as both "format" and
+  // "slotFormat" in different places, and sending them was enough to make the
+  // whole call fail, which showed up as "Open times are unavailable". The plain
+  // call works, and the page computes the end time from the length the member
+  // picked, so the range was never needed.
+  const duration = parseInt(p.duration, 10) || 0;
   const params = Object.assign(
     {
       start: now.toISOString(),
       end: end.toISOString(),
       timeZone: timeZone,
-      format: 'range',
-      slotFormat: 'range',
     },
     calEventRef(),
-    p.duration ? { duration: parseInt(p.duration, 10) } : {}
+    duration ? { duration: duration } : {}
   );
 
   const res = await calFetch('/slots' + qs(params), { version: CAL_VERSION_SLOTS });
   if (!res.ok) {
-    console.error('[slots] Cal.com slots lookup failed:', res.status, res.text.slice(0, 300));
+    console.error('[slots] Cal.com slots lookup failed:', res.status, 'params:', qs(params), 'body:', res.text.slice(0, 400));
     return json(502, { error: 'slots_unavailable', calStatus: res.status });
   }
 
@@ -60,5 +61,5 @@ exports.handler = async (event) => {
     if (cleaned.length) byDay[day] = cleaned;
   });
 
-  return json(200, { timeZone: timeZone, days: days, slots: byDay });
+  return json(200, { timeZone: timeZone, days: days, duration: duration, slots: byDay });
 };

@@ -365,6 +365,11 @@ const verifyLogin = require('../netlify/functions/verify-login');
     await slots.handler(sessionEvent('paid@example.com', { queryStringParameters: { duration: '180' } }));
     assert.ok(/[?&]duration=180(&|$)/.test(lastSlotsUrl), 'duration was not forwarded: ' + lastSlotsUrl);
   });
+  await check('no format parameter is sent (it broke the live call)', async () => {
+    lastSlotsUrl = null;
+    await slots.handler(sessionEvent('paid@example.com', { queryStringParameters: {} }));
+    assert.ok(!/format=/i.test(lastSlotsUrl), 'a format param came back: ' + lastSlotsUrl);
+  });
 
   console.log('\nbook');
   await check('no session cannot book', async () => {

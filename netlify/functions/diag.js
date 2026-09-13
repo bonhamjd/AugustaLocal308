@@ -66,6 +66,22 @@ exports.handler = async (event) => {
       )
     );
 
+  // Same call slots.js makes for a two hour block. If the plain probe above
+  // passes and this one fails, the duration parameter is the problem.
+  const slotsWithDuration =
+    'https://api.cal.com/v2/slots' +
+    qs(
+      Object.assign(
+        {
+          start: now.toISOString(),
+          end: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          timeZone: ENV.clubTimeZone(),
+          duration: 120,
+        },
+        calEventRef()
+      )
+    );
+
   const checks = {};
   const results = await Promise.all([
     ENV.stripeKey()
@@ -110,6 +126,20 @@ exports.handler = async (event) => {
           }
         )
       : Promise.resolve(['calcom_slots', { ok: false, error: 'key not set' }]),
+
+    ENV.calKey()
+      ? ping(
+          'calcom_slots_2hr',
+          slotsWithDuration,
+          { Authorization: 'Bearer ' + ENV.calKey(), 'cal-api-version': CAL_VERSION_SLOTS },
+          (bodyJson) => {
+            const data = (bodyJson && bodyJson.data) || {};
+            let count = 0;
+            Object.keys(data).forEach((k) => { count += (data[k] || []).length; });
+            return { openSlotsNext7: count };
+          }
+        )
+      : Promise.resolve(['calcom_slots_2hr', { ok: false, error: 'key not set' }]),
 
     ENV.resendKey()
       ? ping(

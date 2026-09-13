@@ -34,9 +34,13 @@ function store(event) {
       /* already connected, or running outside Lambda */
     }
   }
-  // Strong consistency: a member who just set a password must be able to log in
-  // with it on the very next request, not up to 60 seconds later.
-  return getStore({ name: 'al308', consistency: 'strong' });
+  // Eventual consistency on purpose. Strong consistency needs an edge URL that
+  // the Lambda-compatible runtime does not provide, and asking for it made every
+  // read fail with "has not been configured with a 'uncachedEdgeURL' property".
+  // The tradeoff is a propagation window of up to a minute, which nothing here
+  // depends on: set-password hands back a session cookie, so a member is already
+  // logged in and never has to race their own write.
+  return getStore('al308');
 }
 
 function keyFor(email) {
@@ -51,7 +55,7 @@ async function getJSON(event, key) {
     return memory.has(key) ? JSON.parse(memory.get(key)) : null;
   }
   try {
-    return await store(event).get(key, { type: 'json', consistency: 'strong' });
+    return await store(event).get(key, { type: 'json' });
   } catch (e) {
     console.error('[store] get failed for ' + key + ': ' + e.message);
     throw e;
