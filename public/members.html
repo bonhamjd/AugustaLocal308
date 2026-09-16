@@ -43,6 +43,7 @@
   .slotgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
   /* Four across at every width so the lengths never wrap to a stray second row. */
   #m-durations{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:420px}
+  @media (max-width:420px){#m-durations{grid-template-columns:repeat(3,1fr)}}
   #m-durations .chip{min-width:0}
   .slot{background:var(--page);border:1px solid var(--line);color:var(--ink);padding:14px 8px;font-size:14px;font-weight:800;cursor:pointer;min-height:52px}
   .slot:hover{border-color:var(--brand);color:var(--brand)}
@@ -221,7 +222,9 @@
 
   var DURATIONS = [
     { minutes: 60, label: '1 hr' },
+    { minutes: 90, label: '1.5 hrs' },
     { minutes: 120, label: '2 hrs' },
+    { minutes: 150, label: '2.5 hrs' },
     { minutes: 180, label: '3 hrs' },
     { minutes: 240, label: '4 hrs' }
   ];
@@ -266,7 +269,7 @@
   }
   function durationLabel(mins) {
     for (var i = 0; i < DURATIONS.length; i++) if (DURATIONS[i].minutes === mins) return DURATIONS[i].label;
-    return Math.round(mins / 60) + ' hrs';
+    return (mins / 60) + ' hrs';
   }
 
   // Show password. One handler for every checkbox that names a field.
@@ -489,7 +492,10 @@
     var up = (state.me && state.me.upcoming) || [];
     if (!up.length) { el.innerHTML = '<div class="note" style="padding:10px 0">Nothing booked yet.</div>'; return; }
     el.innerHTML = up.map(function (b) {
+      var mins = b.end ? Math.round((new Date(b.end) - new Date(b.start)) / 60000) : 0;
       return '<div class="row"><span style="font-weight:700">' + esc(stamp(b.start)) +
+        (b.end ? ' <span style="color:#d4d7d2;font-weight:600">to ' + esc(timeOf(b.end)) + '</span>' : '') +
+        (mins ? ' <span style="color:#83887f;font-weight:600">(' + esc(durationLabel(mins)) + ')</span>' : '') +
         (b.status === 'pending' ? ' <span style="color:#83887f;font-weight:600">(waiting on JD)</span>' : '') +
         '</span><button type="button" class="linkbtn" data-cancel="' + esc(b.uid) + '" style="color:#9ba09a">Cancel</button></div>';
     }).join('');
