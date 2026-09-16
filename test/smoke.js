@@ -12,7 +12,7 @@ process.env.CALCOM_API_KEY = 'cal_test_fake';
 process.env.CALCOM_WEBHOOK_SECRET = 'webhook-secret';
 process.env.RESEND_API_KEY = 're_fake';
 process.env.RESEND_FROM = 'Augusta Local 308 <noreply@augustalocal308.com>';
-process.env.MEMBER_ALLOWLIST = 'bonham.jd@gmail.com, comp@example.com';
+process.env.MEMBER_ALLOWLIST = 'bonham.jd@gmail.com, Gail Compton <comp@example.com>';
 process.env.ADMIN_EMAILS = 'bonham.jd@gmail.com';
 process.env.URL = 'https://augustalocal308.com';
 process.env.AL308_MEMORY_STORE = '1';
@@ -532,6 +532,25 @@ const verifyLogin = require('../netlify/functions/verify-login');
     const d = parse(r);
     assert.strictEqual(d.summary.problems, 3);
     assert.strictEqual(d.summary.atRiskMonthly, 15000);
+  });
+
+  await check('a comped member shows their real name, not their email prefix', async () => {
+    const r = await admin.handler(sessionEvent('bonham.jd@gmail.com', { queryStringParameters: { months: '12' } }));
+    const d = parse(r);
+    const x = d.rows.find((q) => q.email === 'comp@example.com');
+    assert.ok(x, 'comped member missing from the roster');
+    assert.strictEqual(x.name, 'Gail Compton');
+    assert.strictEqual(x.comp, true);
+  });
+  await check('a bare address in the allowlist still comps and still logs in', async () => {
+    const r = await me.handler(sessionEvent('bonham.jd@gmail.com', {}));
+    assert.strictEqual(r.statusCode, 200);
+    assert.strictEqual(parse(r).comp, true);
+  });
+  await check('a name in the allowlist reaches the member page', async () => {
+    const r = await me.handler(sessionEvent('comp@example.com', {}));
+    assert.strictEqual(r.statusCode, 200);
+    assert.strictEqual(parse(r).name, 'Gail Compton');
   });
 
   console.log('\nadmin sets a member password');

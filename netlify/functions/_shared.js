@@ -191,11 +191,25 @@ async function stripeList(resource, params, maxPages) {
 // Comps, the owner, and anyone who pays outside Stripe. Set MEMBER_ALLOWLIST to
 // a comma-separated list of emails. Without this JD cannot book his own bay,
 // because he has no Stripe subscription.
-function emailList(raw) {
+// Accepts either a bare address or "Jace Bonham <jace@example.com>". The name
+// is optional and only used for display; every membership check works off the
+// address alone, so an old bare list keeps working unchanged.
+function parseEntry(raw) {
+  const s = String(raw || '').trim();
+  const m = s.match(/^(.*)<\s*([^>]+)\s*>$/);
+  if (m) return { name: m[1].trim().replace(/^["']|["']$/g, ''), email: m[2].trim().toLowerCase() };
+  return { name: '', email: s.toLowerCase() };
+}
+
+function entryList(raw) {
   return String(raw || '')
     .split(',')
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean);
+    .map(parseEntry)
+    .filter((e) => e.email);
+}
+
+function emailList(raw) {
+  return entryList(raw).map((e) => e.email);
 }
 
 function onAllowlist(email) {
@@ -256,10 +270,14 @@ async function memberInfo(email) {
     cancelAtPeriodEnd: false,
   };
 
-  if (onAllowlist(clean)) {
+  const comp = entryList(ENV.allowlist()).find((e) => e.email === clean);
+  if (comp) {
     info.active = true;
     info.comp = true;
     info.status = 'comp';
+    // A comped member has no Stripe customer, so this is the only place a real
+    // name can come from until they set one themselves under Account.
+    if (comp.name) info.name = comp.name;
   }
 
   if (!ENV.stripeKey()) {
@@ -442,6 +460,7 @@ module.exports = {
   stripeGet,
   stripeList,
   emailList,
+  entryList,
   onAllowlist,
   isAdmin,
   KNOWN_PLANS,

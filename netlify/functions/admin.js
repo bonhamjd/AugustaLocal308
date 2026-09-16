@@ -9,7 +9,7 @@
 // still loads and says which part is dark, rather than failing whole.
 
 const {
-  ENV, stripeList, emailList, isAdmin, planLabel, periodEnd, calAllBookings, requireActiveSession, json,
+  ENV, stripeList, entryList, isAdmin, planLabel, periodEnd, calAllBookings, requireActiveSession, json,
 } = require('./_shared');
 const store = require('./_store');
 
@@ -136,10 +136,13 @@ exports.handler = async (event) => {
     }
   });
 
-  emailList(ENV.allowlist()).forEach(function (email) {
-    const r = row(email);
+  entryList(ENV.allowlist()).forEach(function (entry) {
+    const r = row(entry.email);
     if (!r) return;
     r.comp = true;
+    // Comped members have no Stripe customer, so without this the roster reads
+    // "jrjb4165" instead of "Jace Bonham".
+    if (entry.name) r.name = entry.name;
     if (ACTIVE.indexOf(r.status) === -1) {
       r.status = 'comp';
       r.plan = r.plan || 'Comped';
